@@ -1,0 +1,23 @@
+{% embed '::layout.html.twig' %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            <h3 class="text-center">ACTIVATE RACE TEAM</h3>
+            <hr>
+
+            {% activated == 1 %}
+
+                <h3>Your team has been activated. <a href="/invite">Invite team members</a>.</h3>
+
+            {% else %}
+
+            {% endif %}
+
+        </div>
+
+    {% endblock %}
+
+{% endembed %}
+

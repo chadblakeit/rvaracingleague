@@ -1,0 +1,368 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .drivers-container {
+                max-height: 442px; overflow: auto; border:1px solid #bec7d6;border-radius:4px;
+            }
+            .driver-container {
+                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;font-size:20px;min-height:47px;
+            }
+            .driver-container:hover {
+                background: #8795a3; cursor: pointer;
+            }
+            .driver-container:active {
+                background: #697887;
+            }
+            .driver-container:hover .driver-name {
+                color: #ffffff;
+            }
+            .driver-number {
+                width:40px;padding:5px 0 5px 0;background:#ffffff;border-radius:5px;text-align:center;font-weight:bold;display:inline-block;margin:0 3px 0 7px;
+            }
+            .driver-name {
+                width: auto; padding:5px 0 5px 0;display:inline-block;
+            }
+            .driver-selection {
+                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;min-height:47px;position:relative;
+            }
+            .remove-driver {
+                width:20px;color:red;position:absolute;right:10px;top:10px;cursor:pointer;
+            }
+            .selected {
+                background: #697887;
+            }
+            .selected .driver-name {
+                color: #ffffff;
+            }
+            .drivers-container {
+                float:left;width:49%;background:#ccc;display:inline-block;
+            }
+            .submit-team-container {
+                float:right;width:49%;background:#cccccc;display:inline-block;border:1px solid #bec7d6;border-radius:4px;
+            }
+            .submit-team-container .driver-name {
+                padding-left: 20px;
+            }
+            .submit-team-header {
+                height: 44px; background: #ccc; margin: 1px 1px 2px 1px; border: 1px solid #cccccc; border-radius: 4px; position: relative;
+            }
+            .submit-team-header h3 {
+                padding-left: 15px; line-height: 42px; font-size: 24px; color:#3e7745;
+            }
+            .submit-team-header h3.unsubmitted {
+                color: red;
+            }
+            .team-submission {
+                width:200px;background:#000;color:#fff;border-radius:4px;clear:right;padding:15px;margin:27px auto 26px auto;text-align:center;font-size:20px;
+            }
+            .team-submission.disabled {
+                opacity: 0.25;
+            }
+            .team-submission.valid {
+                background: green; cursor: pointer;
+            }
+            .drivers-header-information {
+                margin-bottom: 20px;
+                border-bottom: 1px solid #cccccc;
+                padding-bottom: 10px;
+                font-size: 18px;
+                float: left;
+                width: 100%;
+            }
+            .drivers-header-information .racename {
+                width: auto;
+                display: inline-block;
+                font-weight: 700;
+                font-size: 24px;
+                float: left;
+            }
+            .drivers-header-information .racename i {
+                margin-right: 10px;
+                margin-left: 2px;
+            }
+            .drivers-header-information .league {
+                width: auto;
+                display: inline-block;
+                text-align: right;
+                float: right;
+            }
+            .drivers-header-information .header-link {
+                width: auto;
+                display: inline-block;
+                float: left;
+                vertical-align: bottom;
+                margin-left: 20px;
+                line-height: 27px;
+            }
+            .drivers-header-information .header-link.active {
+                border-bottom: 2px solid #b8c7d8;
+            }
+            .header-link a, .header-link a:active, .header-link a:visited {
+                text-decoration: none;
+            }
+            .edit-drivers {
+                position: absolute;
+                right: 10px;
+                top: 8px;
+                font-size: 24px;
+                cursor: pointer;
+            }
+            @media (max-width: 660px) {
+                .mobile-dimension-11 {
+                    width: calc(100% / 12 * 11);
+                }
+            }
+            @media (max-width: 585px) {
+                .drivers-container {
+                    width: 100%;
+                }
+                .submit-team-container {
+                    float: none; clear: left; width: 100%; margin-top: 20px;
+                }
+            }
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="content-container dimension-10 mobile-dimension-11">
+
+            <div class="dashboard-container">
+
+                <div class="drivers-header-information">
+                    <div class="racename">
+                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ activerace.racename }}
+                    </div>
+                    <div class="header-link">
+                        <a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">Race Lineups</a>
+                    </div>
+                    <div class="league">
+                        {{ activeleague.name }}
+                    </div>
+                </div>
+
+                <form name="leagueForm" id="leagueForm" method="post">
+                    <div style="width:100%;float:left;">
+                        <div class="drivers-container">
+                            {% for driver in drivers %}
+
+                                <div class="driver-container" id="driver{{ driver.id }}">
+                                    <div class="driver-number">{{ driver.number }}</div>
+                                    <div class="driver-name">{{ driver.firstname }}&nbsp;{{ driver.lastname }}</div>
+                                    <input type="hidden" name="driverid" value="{{ driver.id }}" />
+                                </div>
+
+                            {% endfor %}
+                        </div>
+                        <div class="submit-team-container">
+                            <div class="submit-team-header">
+                                <h3 class="{{ driver_class }}">
+                                    {% if mydrivers %}
+                                        Lineup Submitted
+                                    {% else %}
+                                        Select Your Lineup
+                                    {% endif %}
+                                </h3>
+                                {% if mydrivers and race_locked == false %}<i class="fa fa-pencil-square-o edit-drivers" aria-hidden="true"></i>{% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.0.number }}</div><div class="driver-name">{{ mydrivers.0.firstname }} {{ mydrivers.0.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.0.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.1.number }}</div><div class="driver-name">{{ mydrivers.1.firstname }} {{ mydrivers.1.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.1.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.2.number }}</div><div class="driver-name">{{ mydrivers.2.firstname }} {{ mydrivers.2.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.2.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.3.number }}</div><div class="driver-name">{{ mydrivers.3.firstname }} {{ mydrivers.3.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.3.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.4.number }}</div><div class="driver-name">{{ mydrivers.4.firstname }} {{ mydrivers.4.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.4.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="driver-selection {{ lineup_status }}">
+                                {% if mydrivers %}
+                                    <div class="driver-number">{{ mydrivers.5.number }}</div><div class="driver-name">{{ mydrivers.5.firstname }} {{ mydrivers.5.lastname }}</div>
+                                    <input type="hidden" name="driverSelection[]" value="{{ mydrivers.5.id }}" />
+                                {% endif %}
+                            </div>
+                            <div class="team-submission disabled">Submit Lineup</div>
+                        </div>
+                    </div>
+                </form>
+                <div style="clear:both;"></div>
+
+            </div>
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $(".driver-container").each(function(){
+                    var driver = this;
+                    $(this).on("click", function(){
+
+                        if ($(".driver-selection.closed").length >= 6) {
+                            console.log("DRIVERS FILLED");
+                            return false;
+                        }
+
+                        if (!$(driver).hasClass("selected")) {
+                            $(driver).addClass("selected");
+                            var driverid = $(this).find('input').val();
+                            var dshtml = "<div class='driver-number'>"+$(driver).find('.driver-number').html()+"</div>"+
+                                         "<div class='driver-name'>"+$(driver).find('.driver-name').html()+"</div>"+
+                                         "<div class='remove-driver'>X</div>"+
+                                         "<input type='hidden' name='driverSelection[]' value='"+driverid+"' />";
+
+                            $(".driver-selection.open:first").html(dshtml);
+                            $(".driver-selection.open:first").addClass("closed");
+                            $(".driver-selection.open:first").removeClass("open");
+
+
+                            if ($(".driver-selection.closed").length == 6) {
+                                var data = {
+                                    d1: $($(".driver-selection")[0]).find('input').val(),
+                                    d2: $($(".driver-selection")[1]).find('input').val(),
+                                    d3: $($(".driver-selection")[2]).find('input').val(),
+                                    d4: $($(".driver-selection")[3]).find('input').val(),
+                                    d5: $($(".driver-selection")[4]).find('input').val(),
+                                    d6: $($(".driver-selection")[5]).find('input').val()
+                                };
+                                $.ajax({
+                                    url: "/race/checksubmission",
+                                    method: "post",
+                                    dataType: "json",
+                                    data: data,
+                                    success: function (xhr) {
+                                        console.log(xhr);
+                                        if (xhr.available == false) {
+                                            alert("Lineup Already Taken");
+                                            // TODO: disabled submit button
+                                        } else {
+                                            $(".team-submission").removeClass("disabled");
+                                            $(".team-submission").addClass("valid");
+                                        }
+                                    },
+                                    error: function (xhr) {
+                                        console.log(xhr);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+                $(document).on("click", ".remove-driver", function(){
+                    $("#driver"+$(this).next('input').val()).removeClass("selected");
+                    $(this).parent(".driver-selection").removeClass("closed");
+                    $(this).parent(".driver-selection").addClass("open");
+                    $(this).parent(".driver-selection").html("");
+                    $(".team-submission").addClass("disabled");
+                    $(".team-submission").removeClass("valid");
+                });
+                $(".team-submission").on("click", function(){
+                    if ($(this).hasClass("disabled")) {
+                        console.log("submit disabled");
+                        return false;
+                    }
+                    if (!$(this).hasClass("in-progress")) {
+                        $(this).addClass("in-progress");
+                        $(".team-submission").html("Checking Lineup...");
+                        $(".edit-drivers").hide();
+                        var data = {
+                            d1: $($(".driver-selection")[0]).find('input').val(),
+                            d2: $($(".driver-selection")[1]).find('input').val(),
+                            d3: $($(".driver-selection")[2]).find('input').val(),
+                            d4: $($(".driver-selection")[3]).find('input').val(),
+                            d5: $($(".driver-selection")[4]).find('input').val(),
+                            d6: $($(".driver-selection")[5]).find('input').val()
+                        };
+                        $(".remove-driver").hide();
+                        $.ajax({
+                            url: "/race/checksubmission",
+                            method: "post",
+                            dataType: "json",
+                            data: data,
+                            success: function (xhr) {
+                                console.log(xhr);
+                                if (xhr.available == false) {
+                                    alert("Lineup already taken");
+                                    $(".team-submission").removeClass("in-progress");
+                                    $(".team-submission").addClass("valid");
+                                    $(".team-submission").html("Submit Drivers");
+                                    $(".remove-driver").show();
+                                    // TODO: disabled submit button
+                                } else {
+                                    console.log("lineup is good!");
+                                    $(".team-submission").html("Submitting Drivers...");
+                                    $(".remove-driver").remove();
+                                    $.ajax({
+                                        url: "/race/submission",
+                                        method: "post",
+                                        dataType: "json",
+                                        data: data,
+                                        success: function (xhr) {
+                                            console.log(xhr);
+                                            $(".team-submission").html("Drivers Submitted");
+                                            $(".team-submission").addClass("disabled");
+                                            $(".team-submission").removeClass("valid");
+                                            $(".submit-team-header h3").html("Lineup Submitted");
+                                            $(".submit-team-header h3").addClass("submitted");
+                                            $(".submit-team-header h3").removeClass("unsubmitted");
+                                            $(".edit-drivers").show();
+                                            $(".edit-drivers").removeClass("edit-enabled");
+                                            alert("Team Submitted Successfully");
+                                        },
+                                        error: function (xhr) {
+                                            console.log(xhr);
+                                        }
+                                    });
+                                }
+                            },
+                            error: function (xhr) {
+                                console.log(xhr);
+                            }
+                        });
+                    }
+                });
+                $(".edit-drivers").on("click", function(){
+                    if (!$(this).hasClass("edit-enabled")) {
+                        $(".edit-drivers").addClass("edit-enabled");
+                        $(".submit-team-header h3").html("Edit Lineup");
+                        $(".team-submission").html("Submit Lineup");
+                        $(".team-submission").removeClass("in-progress");
+                        $(".driver-selection").each(function () {
+                            $(this).find(".driver-name").after("<div class='remove-driver'>X</div>");
+                            var selected_driver = this;
+                            $(".driver-container").each(function(){
+                                if ($(this).find("input[name=driverid]").val() == $(selected_driver).find("input[type=hidden]").val()) {
+                                    $(this).addClass("selected");
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        </script>
+    {% endblock %}
+
+{% endembed %}
+

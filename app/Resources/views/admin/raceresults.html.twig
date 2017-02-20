@@ -1,0 +1,208 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .driver-container {
+                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;min-height:35px;
+            }
+            .admin-driver-selection {
+                width: calc((100% / 12) * 5);
+                max-width: calc((100% / 12) * 5);
+                min-width: calc((100% / 12) * 5);
+                background: #CC7832;
+                padding: 1px;
+                display: inline-block;
+                vertical-align: top;
+                height: 600px;
+                overflow: auto;
+                border: 1px solid #000;
+            }
+            .admin-driver-result {
+                width: calc((100% / 12) * 5);
+                max-width: calc((100% / 12) * 5);
+                min-width: calc((100% / 12) * 5);
+                background: #66dd66;
+                display: inline-block;
+                vertical-align: top;
+            }
+            .result-arrows {
+                display: inline-block;
+                vertical-align: top;
+                background: #dd8888;
+                height: 600px;
+                width: 50px;
+                margin: 0 10px 0 10px;
+                position: relative;
+            }
+            .selected {
+                background: #218BC3;
+            }
+            .position-added {
+                opacity: 0.5;
+                background: #f2f2f2;
+            }
+            .driver-position-container {
+                width: 100%;
+                margin: 2px 0 2px 0;
+                background: #ffff00;
+            }
+            .race-submit-result {
+                width: 200px;
+                margin: 20px auto;
+                font-size: 28px;
+                background: #8959A8;
+                border-radius: 10px;
+                text-align: center;
+                cursor: pointer;
+            }
+            .driver-position {
+                width:50px;display:inline-block;border:1px solid #555;background:#aaa;margin-right:10px;text-align: center;
+            }
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+
+                <h3 class="text-center">RACE RESULTS</h3>
+                <hr>
+                <form name="raceForm" id="raceForm" method="post" action="/admin/submitraceresults">
+
+                <div style="width:820px;margin:0 auto;border:1px solid #000;padding:10px;">
+
+                    <div style="width:100%;background:#f2f2f2;">
+                        Race: {{ race.racename }}<br /><br />
+                        <input type="hidden" name="race" value="{{ race.id }}" />
+
+                        <div class="admin-driver-selection">
+                            <div class="drivers-container">
+                                {% for driver in drivers %}
+
+                                    <div class="driver-container{% if results is not empty %} position-added{% endif %}" id="driver{{ driver.id }}">
+                                        <div class="driver-number">{{ driver.number }}</div>
+                                        <div class="driver-name">{{ driver.firstname }}&nbsp;{{ driver.lastname }}</div>
+                                        <input type="hidden" name="driverid" value="{{ driver.id }}" />
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="result-arrows">
+                            <div style="position:absolute;top:0;bottom:0;left:0;right:0;margin:auto;height:100px;width:50px;font-size:40px;background:#fff;text-align:center;">
+                                <a href="javascript:void(0);" class="add-driver-position">&gt;</a><br />
+                                <a href="javascript:void(0);" class="remove-driver-position">&lt;</a>
+                            </div>
+                        </div>
+                        <div class="admin-driver-result">
+                            {% if results is not empty %}
+                                {% for driverid in results %}
+                                    <div class="driver-position-container">
+                                        <div class="driver-result">
+                                            <div class="driver-position">{{ loop.index }}</div>
+                                            <div style="width:200px;display:inline-block;background:#e1e1e1;">{{ driverInfo[driverid].number }}&nbsp;{{ driverInfo[driverid].firstname }}&nbsp;{{ driverInfo[driverid].lastname }}</div>
+                                            <a href="javascript:void(0);" class="up-result">U</a>&nbsp;&nbsp;<a href="javascript:void(0);" class="down-result">D</a>
+                                            <input type="hidden" name="raceResult[]" value="{{ driverid }}" />
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="race-submit-result">Submit Results</div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+
+                </form>
+
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+            {% endif %}
+
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            var driver_positions = 0;
+            var driverid;
+            $(document).ready(function() {
+                $(".driver-container").each(function(){
+                    $(this).on("click", function(){
+                        if (!$(this).hasClass("position-added")) {
+                            $(".driver-container").removeClass("selected");
+                            $(this).addClass("selected");
+                        }
+                    });
+                });
+                $(".add-driver-position").on("click", function(){
+                    if ($(".driver-container").hasClass("selected")) {
+                        console.log($(".driver-container.selected"));
+                        $(".driver-container.selected").addClass("position-added");
+
+                        driver_positions = $(".admin-driver-result").find(".driver-position-container").length;
+                        console.log(driver_positions);
+
+                        driverid = $(".driver-container.selected").find("input[name=driverid]").val();
+                        driver_positions++;
+                        var html = "<div class='driver-position-container'>";
+                            html+= "<div class='driver-result'>";
+                            html+= "<div class='driver-position'>"+driver_positions+"</div>";
+                            html+= '<span style="background:red;padding:5px;">'+$(".driver-container.selected").find(".driver-number").html()+'</span>';
+                            html+= '<div style="width:200px;display:inline-block;background:#e1e1e1;">'+$(".driver-container.selected").find(".driver-name").html()+'</div>';
+                            html+= '<input type="hidden" name="raceResult[]" value="'+driverid+'" />';
+                            html+= "</div>";
+                            html+= "</div>";
+
+                        $(".admin-driver-result").append(html);
+                        $(".driver-container.selected").removeClass("selected");
+
+                        if (driver_positions == $(".driver-container").length) {
+                            $(".admin-driver-result").append("<div class='race-submit-result'>Submit Results</div>");
+                            $(".race-submit-result").on("click", function(){
+                                submitRaceResults();
+                            });
+                        }
+                    }
+                });
+
+                $(".up-result").on("click", function(){
+                    var driverObj = $(this).parent().parent(".driver-position-container");
+                    var pos = parseInt(driverObj.find(".driver-position").html());
+                    if ((pos-1) > 0) {
+                        driverObj.find(".driver-position").html((pos-1));
+                        driverObj.prev(".driver-position-container").find(".driver-position").html(pos);
+                        driverObj.prev(".driver-position-container").before(driverObj);
+                    }
+                });
+                $(".down-result").on("click", function(){
+                    var driverObj = $(this).parent().parent(".driver-position-container");
+                    var pos = parseInt(driverObj.find(".driver-position").html());
+                    if ((pos+1) < $(".driver-position-container").length) {
+                        driverObj.find(".driver-position").html((pos+1));
+                        driverObj.next(".driver-position-container").find(".driver-position").html(pos);
+                        driverObj.next(".driver-position-container").after(driverObj);
+                    }
+                });
+
+                {% if results is not empty %}
+                    $(".race-submit-result").on("click", function(){
+                        submitRaceResults();
+                    });
+                {% endif %}
+            });
+            function submitRaceResults() {
+                $("#raceForm").submit();
+            }
+        </script>
+    {% endblock %}
+
+{% endembed %}
+

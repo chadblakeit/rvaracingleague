@@ -1,0 +1,95 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
+     * @ORM\Column(name="team_id", type="integer")
+     * @Assert\NotBlank()
+     */
+    protected $team_id;
+
+    /**
+     * @ORM\Column(name="firstname", type="string")
+     * @Assert\NotBlank()
+     */
+    protected $firstname;
+
+    /**
+     * @ORM\Column(name="lastname", type="string")
+     * @Assert\NotBlank()
+     */
+    protected $lastname;
+
+    /**
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * @param mixed $firstname
+     */
+    public function setFirstname($firstname)
+    {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param mixed $lastname
+     */
+    public function setLastname($lastname)
+    {
+        $this->lastname = $lastname;
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getTeamId()
+    {
+        return $this->team_id;
+    }
+
+    /**
+     * @param mixed $team_id
+     */
+    public function setTeamId($team_id)
+    {
+        $this->team_id = $team_id;
+    }
+
+    public function __construct()
+    {
+        parent::__construct();
+
+    }
+
+}

@@ -1,0 +1,174 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+a, a:active, a:visited {
+    text-decoration: none;
+    color: blue;
+}
+
+input[type=text], input[type=password], input[type=email]  {
+    width: 100%;
+    border-radius: 4px;
+    outline: none;
+    padding: 8px 0 8px 10px;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    margin-bottom: 10px;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    background: #b8c7d8;
+    min-width: 320px;
+}
+
+.login-register-header-container {
+    text-align: right;
+    padding: 20px;
+}
+
+.login-register-header-container a,
+.login-register-header-container a:active,
+.login-register-header-container a:visited {
+    color: #ffffff;
+}
+
+.login-register-container {
+    padding: 20px;
+}
+
+.login-register-container label {
+    display: block;
+}
+
+.fos-user-container {
+    max-width: 450px;
+    min-width: 300px;
+    width: calc(100% / 12 * 10);
+    margin: auto;
+}
+
+.fos-user-header {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: Verdana;
+    margin-bottom: 20px;
+}
+
+.fos-user-subheader {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.fos-user-content {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 4px;
+}
+
+.remember-forgot-container {
+    float: left;
+    margin: 10px 0px 15px 0px;
+    width: 100%;
+}
+
+.remember-forgot-container .remember {
+     display: inline-block;
+     width: calc(100% / 12 * 6);
+     float: left;
+}
+
+.remember-forgot-container .remember input[type=checkbox] {
+    display: inline-block;
+    float: left;
+    margin: 2px 6px 0 0;
+}
+
+.remember-forgot-container .forgot {
+    display: inline-block;
+    width: calc(100% / 12 * 5);
+    float: right;
+    text-align: right;
+}
+
+.login-register-container input[type=submit], .login-register-container button[type=submit] {
+    background-color:#7a8091;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    border-radius:4px;
+    border:1px solid #ffffff;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:17px;
+    font-weight: 700;
+    padding:8px 15px;
+    text-decoration:none;
+    width: 100%;
+    clear: both;
+}
+.login-register-container input[type=submit]:hover, .login-register-container button[type=submit] {
+    background-color:#878ea3;
+}
+.login-register-container input[type=submit]:active, .login-register-container button[type=submit] {
+    position:relative;
+    top:1px;
+}
+
+.flash-message {
+    max-width: 450px;
+    min-width: 300px;
+    width: calc(100% / 12 * 10);
+    margin: auto;
+}
+
+.flash-message-wrapper {
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    color: #000000;
+    border: 1px solid #660000;
+    background: #dd8888;
+    border-radius: 4px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.activated-message {
+    padding: 20px;
+}
+
+.find-leagues-container {
+    padding: 20px;
+}
+
+.invalid_error {
+    color: red;
+    margin-bottom: 8px;
+    border: 1px solid red;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.invalid_error i {
+    margin-right: 10px;
+}

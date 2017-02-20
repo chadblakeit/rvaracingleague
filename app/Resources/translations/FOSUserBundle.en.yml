@@ -1,0 +1,11 @@
+security:
+    login:
+        email: 'Email Address'
+        username: 'Email'
+        password: 'Password'
+        remember_me: 'Remember me'
+        submit: 'Log in'
+
+form:
+    firstname: 'First Name'
+    lastname: 'Last Name'

@@ -1,0 +1,42 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block content_header %}
+    <h3>Register Your Race Team</h3>
+{% endblock %}
+
+{% block fos_user_content %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+
+    <div class="login-register-container">
+
+        {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+
+        {{ form_label(form.email) }}
+        {{ form_errors(form.email) }}
+        {{ form_widget(form.email) }}
+
+        {{ form_label(form.username) }}
+        {{ form_errors(form.username) }}
+        {{ form_widget(form.username) }}
+
+        {{ form_label(form.firstname, 'First name') }}
+        {{ form_errors(form.firstname) }}
+        {{ form_widget(form.firstname) }}
+
+        {{ form_label(form.lastname, 'Last name') }}
+        {{ form_errors(form.lastname) }}
+        {{ form_widget(form.lastname) }}
+
+        {{ form_errors(form.plainPassword) }}
+        {{ form_widget(form.plainPassword) }}
+
+        <br />
+        <div>
+            <button type="submit" class="btn btn-primary form-control font-size-large">Register</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
+

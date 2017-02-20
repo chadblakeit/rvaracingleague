@@ -1,0 +1,146 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .drivers-header-information {
+                margin-bottom: 20px;
+                border-bottom: 1px solid #cccccc;
+                padding-bottom: 10px;
+                font-size: 18px;
+                float: left;
+                width: 100%;
+            }
+            .drivers-header-information .racename {
+                width: auto;
+                display: inline-block;
+                font-weight: 700;
+                font-size: 24px;
+                float: left;
+            }
+            .drivers-header-information .racename i {
+                margin-right: 10px;
+                margin-left: 2px;
+            }
+            .drivers-header-information .league {
+                width: auto;
+                display: inline-block;
+                text-align: right;
+                float: right;
+            }
+            .drivers-header-information .header-link {
+                width: auto;
+                display: inline-block;
+                float: left;
+                vertical-align: bottom;
+                margin-left: 20px;
+                line-height: 27px;
+                border-bottom: 2px solid #b8c7d8;
+            }
+            .drivers-header-information .header-link.active {
+                border-bottom: 2px solid #b8c7d8;
+            }
+            .header-link a, .header-link a:active, .header-link a:visited {
+                text-decoration: none;
+            }
+            .lineup-container {
+                min-width: calc(100% / 12 * 3);
+                width: auto;
+                display: inline-block;
+                min-width: 230px;
+                font-size: 18px;
+            }
+            .lineup-wrapper {
+                padding: 6px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+                background: #94a6ba;
+                border-radius: 4px;
+            }
+            .lineup-user {
+                margin: 0 0 5px 2px;
+                color: #ffffff;
+                font-weight: 700;
+                text-shadow: 0 1px #000;
+                font-size: 20px;
+                font-family: Tahoma;
+            }
+            .lineup-driver {
+                padding: 6px;
+                background: #f2f2f2;
+                border-bottom: 1px solid #cccccc;
+            }
+            .lineup-driver-number {
+                width: 30px;
+                background: #d7dee5;
+                margin-right: 5px;
+                text-align: center;
+                border-radius: 4px;
+                display: inline-block;
+            }
+            .lineup-driver-name {
+                display: inline-block;
+                width: auto;
+            }
+            @media (max-width: 600px) {
+                .lineup-container {
+                    width: 100%;
+                }
+                .lineup-wrapper {
+                    margin-right: 0;
+                }
+            }
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="content-container dimension-10 mobile-dimension-11">
+
+            <div class="dashboard-container">
+
+                <div class="drivers-header-information">
+                    <div class="racename">
+                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ race.racename }}
+                    </div>
+                    <div class="header-link active">
+                        <a href="{{ path('app.rva.racelineups', {'race':race.id}) }}">Race Lineups</a>
+                    </div>
+                    <div class="league">
+                        {{ activeleague.name }}
+                    </div>
+                </div>
+                <div style="padding-bottom:40px;">
+                    {% if submissions|length > 0 %}
+                        {% for submission in submissions %}
+                            <div class="lineup-container">
+                                <div class="lineup-wrapper">
+                                    <div class="lineup-user">{{ users[submission.fosUser.id].firstname }}&nbsp;{{ users[submission.fosUser.id].lastname }}</div>
+                                    {% for driver_id in submission.drivers %}
+                                        <div class="lineup-driver">
+                                            <div class="lineup-driver-number">{{ drivers[driver_id].number }}</div>
+                                            <div class="lineup-driver-name">{{ drivers[driver_id].firstname }}&nbsp;{{ drivers[driver_id].lastname }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+
+            </div>
+
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+            });
+        </script>
+    {% endblock %}
+
+{% endembed %}
+

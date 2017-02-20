@@ -1,0 +1,59 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .driver-container {
+                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;min-height:35px;
+            }
+
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+
+                <h3 class="text-center">SCHEDULE</h3>
+                <hr>
+                <div style="width:820px;margin:0 auto;border:1px solid #000;padding:10px;">
+
+                    <div style="width:100%;background:#f2f2f2;">
+
+                        {% for race in schedule %}
+
+                            <div style="border-bottom:1px solid #000;padding:10px 0 10px 0;">
+                                <div style="width:100px;display:inline-block;background:burlywood;"></div>
+                                <div style="width:250px;display:inline-block;background:blanchedalmond;text-transform:uppercase;font-weight:700;font-size:20px;text-align:center;">{{ race.racename }}</div>
+                                <div style="width:300px;display:inline-block;background:#bfe5f1;">{{ race.racedate|date('l M. d / g:i A') }}<br />{{ race.trackname }}<br />length: {{ race.tracklength }} mi</div>
+                                <div style="width:100px;display:inline-block;background:gainsboro;"><a href="#">Results</a></div>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+            {% endif %}
+
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+            });
+        </script>
+    {% endblock %}
+
+{% endembed %}
+

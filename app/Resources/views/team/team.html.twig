@@ -1,0 +1,36 @@
+{% embed '::layout.html.twig' %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            {% if register == true %}
+
+                <h3 class="text-center">Race Team Created</h3>
+                <p>Thank you for registering your race team. An email has been sent to <strong>{{ email }}</strong> with an activation code.
+                You must activate your race team before you can invite users.</p>
+
+            {% else %}
+
+                <h3 class="text-center">REGISTER YOUR RACE TEAM</h3>
+                <hr>
+
+                {{ form_start(form) }}
+
+                {{ form_label(form.email) }}
+                {{ form_errors(form.email) }}
+                {{ form_widget(form.email) }}
+
+                {{ form_label(form.name) }}
+                {{ form_errors(form.name) }}
+                {{ form_widget(form.name) }}
+
+                {{ form_end(form) }}
+
+            {% endif %}
+        </div>
+
+    {% endblock %}
+
+{% endembed %}
+

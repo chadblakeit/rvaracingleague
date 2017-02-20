@@ -1,0 +1,112 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .league_container {
+                border-radius: 6px;
+                border: 1px solid #99CDD8;
+                background: #bfe5f1;
+                width: 200px;
+                display: inline-block;
+                margin: 20px 10px 20px 10px;
+                padding: 10px;
+                box-shadow: 0px 2px 1px #218BC3;
+            }
+            .league_container:hover {
+                background: #99CDD8;
+                border: 1px solid #218BC3;
+            }
+            .accept_league {
+                width: 100%;
+                background: #218BC3;
+                color: #ffffff;
+                margin-top: 10px;
+                padding: 8px 0 8px 0;
+                border-radius: 6px;
+                text-align: center;
+            }
+            .accept_league:hover {
+                color: #000;
+                background: #ffffff;
+                cursor: pointer;
+            }
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+
+                <h3 class="text-center">JOIN LEAGUE</h3>
+                <hr>
+                {% if invitedLeagues is not empty %}
+                    <h2>You have been invited to the following leagues:</h2>
+                    <form name="leagueForm" id="leagueForm" method="post">
+                        {{ dump(invitedLeagues) }}
+                        {% for inviteUser in invitedLeagues %}
+                            <div class="league_container" id="league{{ loop.index }}">
+                                <strong>{{ inviteUser.league.name }}</strong><br />
+                                {{ inviteUser.league.email }}
+                                <input type="hidden" value="{{ LeagueInvite.leagueHash(inviteUser.league.id, inviteUser.league.email) }}" name="inviteleague" />
+                                <input type="hidden" value="{{ inviteUser.league.email }}" name="inviteleague_email" />
+                                <div class="accept_league">Accept Invite</div>
+                            </div>
+                        {% endfor %}
+                    </form>
+
+                {% endif %}
+
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+            {% endif %}
+
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            $(document).ready(function(){
+                $(".league_container").each(function(){
+                    var lc = this;
+                    $(this).find(".accept_league").on("click", function(e) {
+                        var data = {
+                            inviteleague_email: $(lc).find("input[name=inviteleague_email]").val(),
+                            inviteleague: $(lc).find("input[name=inviteleague]").val(),
+                            leagueindex: $(lc).attr('id')
+                        };
+                        $.ajax({
+                            url: "/acceptinvite",
+                            method: "post",
+                            dataType: "json",
+                            data: data,
+                            beforeSend: function( xhr ) {
+                                $(lc).find('.accept_league').off('click');
+                                $(lc).find('.accept_league').html('Please wait...');
+                            },
+                            success: function( xhr ) {
+                                console.log(xhr);
+                                if (xhr.invitesuccess == true) {
+                                    $("#"+xhr.leagueindex).find('.accept_league').html('Invite Successful');
+                                    $("#"+xhr.leagueindex).find('.accept_league').css('background','green');
+                                } else {
+                                    $("#"+xhr.leagueindex).find('.accept_league').html('Error');
+                                }
+                            },
+                            error: function( xhr ) {
+                                console.log(xhr);
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+    {% endblock %}
+
+{% endembed %}

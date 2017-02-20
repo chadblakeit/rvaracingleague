@@ -1,0 +1,107 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block styles %}
+<style>
+    .league_container {
+        border-radius: 4px;
+        border: 1px solid #607399;
+        background: #ced5e2;
+        margin: 20px 0 20px 0;
+        padding: 10px;
+        box-shadow: 0px 2px 1px #607399;
+        font-size: 18px;
+    }
+    .accept_league {
+        width: 100%;
+        background: #607399;
+        color: #ffffff;
+        margin-top: 10px;
+        padding: 10px 0 10px 0;
+        border-radius: 4px;
+        text-align: center;
+    }
+    .accept_league:hover {
+        color: #000;
+        background: #e1e4ea;
+        cursor: pointer;
+    }
+    .accept_league a:hover { color: #fff; }
+</style>
+{% endblock %}
+
+{% block fos_user_content %}
+
+    {% trans_default_domain 'FOSUserBundle' %}
+
+    <div class="activated-message">
+        <p>{{ 'registration.confirmed'|trans({'%username%': user.username}) }}</p>
+        {% if targetUrl %}
+            <p><a href="{{ targetUrl }}">{{ 'registration.back'|trans }}</a></p>
+        {% endif %}<br /><br />
+        [ Area TBD for searching for current leagues ]
+    </div>
+    <div class="find-leagues-container">
+
+        {% if invitedLeagues is not empty %}
+            <h2>League Invites:</h2>
+            <form name="leagueForm" id="leagueForm" method="post">
+            {% for inviteUser in invitedLeagues %}
+                <div class="league_container" id="league{{ loop.index }}">
+                    <div><strong>{{ inviteUser.league.name }}</strong></div>
+                    <div style="margin: 5px 0 5px 0;">League owner: {{ inviteUser.league.fosuser.email }}</div>
+                    <input type="hidden" value="{{ LeagueInvite.leagueHash(inviteUser.league.id, inviteUser.league.fosuser.email) }}" name="inviteleague" />
+                    <input type="hidden" value="{{ inviteUser.league.fosuser.email }}" name="inviteleague_email" />
+                    <div class="accept_league">Join League</div>
+                </div>
+            {% endfor %}
+            </form>
+        {% else %}
+            <h2>You have no league invites.</h2><br />
+            <a href="{{ path("app.rva.home") }}">Home</a><br />
+        {% endif %}
+
+    </div>
+
+{% endblock fos_user_content %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".league_container").each(function(){
+                var lc = this;
+                $(this).find(".accept_league").on("click", function(e) {
+                    var data = {
+                        inviteleague_email: $(lc).find("input[name=inviteleague_email]").val(),
+                        inviteleague: $(lc).find("input[name=inviteleague]").val(),
+                        leagueindex: $(lc).attr('id')
+                    };
+                    $.ajax({
+                        url: "/league/acceptinvite",
+                        method: "post",
+                        dataType: "json",
+                        data: data,
+                        beforeSend: function( xhr ) {
+                            $(lc).find('.accept_league').off('click');
+                            $(lc).find('.accept_league').html('<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span>');
+                        },
+                        success: function( xhr ) {
+                            console.log(xhr);
+                            if (xhr.invitesuccess == true) {
+                                $("#"+xhr.leagueindex).find('.accept_league').html('Joined!');
+                                $("#"+xhr.leagueindex).find('.accept_league').css('background','green');
+                                setTimeout(function(){ window.location.href = '/home'; },1000);
+                            } else {
+                                $("#"+xhr.leagueindex).find('.accept_league').html('Error');
+                                $("#"+xhr.leagueindex).find('.accept_league').css('background','red');
+                            }
+                        },
+                        error: function( xhr ) {
+                            console.log(xhr);
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}
+

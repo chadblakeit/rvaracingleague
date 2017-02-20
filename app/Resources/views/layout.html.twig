@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}" />
+    <link rel="stylesheet" href="{{ asset('fontawesome/css/font-awesome.min.css') }}">
+{% endblock %}
+{% block scripts %}
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    {% block promo %}{% endblock %}
+    <div class="container">
+        {% block header %}
+            <div class="header-container">
+                <div class="header-info-container dimension-10">
+                    <div class="header-logo"><a href="{{ path("app.rva.home") }}">RVA Racing League</a></div>
+                    <div class="header-user">
+                        <div class="avatar"><i class="fa fa-user-circle" aria-hidden="true"></i></div>
+                        <div class="user">
+                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                {{ app.user.username }}
+                                <div class="user-dropdown">
+                                    <ul>
+                                        <li><a href="#">Account</a></li>
+                                        <li><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a></li>
+                                    </ul>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+        <div class="message-container">{% block message %}{% endblock %}</div>
+        {% block content %}{% endblock %}
+    </div>
+    {% block footer %}
+        <div style="height:80px;"></div>
+    {% endblock %}
+{% endblock %}

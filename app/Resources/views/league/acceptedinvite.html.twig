@@ -1,0 +1,24 @@
+{% embed '::layout.html.twig' %}
+
+    {% block content %}
+
+        <div class="register container-fluid container-wrapper">
+
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+
+                <h3 class="text-center">ACCEPTED LEAGUE INVITE!!!</h3>
+                <hr>
+
+            {% else %}
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+            {% endif %}
+
+        </div>
+
+    {% endblock %}
+
+{% endembed %}
