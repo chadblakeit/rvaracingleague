@@ -32,6 +32,13 @@ html, body {
     margin: 0 auto;
 }
 
+.container-6 {
+    width: calc(100% / 12 * 10);
+    min-width: 300px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 /* header */
 
 .header-container {
@@ -214,4 +221,152 @@ html, body {
 .accept-league.submitting {
     background: #7e91b7;
     padding-top: 10px;
+}
+
+
+/* create league */
+.form-title {
+    border-bottom: 1px solid #cccccc;
+    margin-bottom: 10px;
+}
+input[type=text] {
+    width: 100%;
+    border-radius: 4px;
+    outline: none;
+    padding: 8px 0 8px 10px;
+    font-size: 18px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    margin-bottom: 10px;
+}
+button[type=submit] {
+    background-color:#7a8091;
+    -moz-border-radius:4px;
+    -webkit-border-radius:4px;
+    border-radius:4px;
+    border:1px solid #ffffff;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:17px;
+    font-weight: 700;
+    padding:8px 15px;
+    text-decoration:none;
+    width: 100%;
+    clear: both;
+}
+button[type=submit]:hover {
+    background-color:#878ea3;
+}
+
+
+/* race results */
+.dimension-8 {
+    width: calc(100% / 12 * 8);
+}
+.dimension-6 {
+    width: calc(100% / 12 * 6);
+}
+.dimension-4 {
+    width: calc(100% / 12 * 4);
+}
+
+.race-results-users {
+    vertical-align: top;
+}
+
+.race-results-container {
+    background:#f2f2f2;
+    display: inline-block;
+    min-width: 250px;
+    vertical-align: top;
+}
+
+.race-results-drivers {
+    display: inline-block;
+    min-width: 250px;
+}
+
+.results-driver-container {
+    float: left;
+    clear: left;
+    margin-bottom: 1px;
+    width: 100%;
+    background: #f2f2f2;
+}
+
+.results-driver-container .driver-number {
+    background: #b8c7d8;
+    color: #ffffff;
+    padding: 2px 5px 2px 5px;
+    display: inline-block;
+    width: 32px;
+    margin-right: 5px;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.results-driver-container .driver {
+    display: inline-block;
+    margin: 2px 0 2px 5px
+}
+
+.results-driver-container .position {
+    float: right;
+    display: inline-block;
+    line-height: 28px;
+    margin-right: 5px;
+    text-align: center;
+}
+
+.total-result {
+    display: inline-block;
+    float: right;
+    font-weight: 700;
+}
+
+.drivers-header-information {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #cccccc;
+    padding-bottom: 10px;
+    font-size: 18px;
+    float: left;
+    width: 100%;
+}
+.drivers-header-information .racename {
+    width: auto;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 24px;
+    float: left;
+}
+.drivers-header-information .racename i {
+    margin-right: 10px;
+    margin-left: 2px;
+}
+.drivers-header-information .league {
+    width: auto;
+    display: inline-block;
+    text-align: right;
+    float: right;
+}
+.drivers-header-information .header-link {
+    width: auto;
+    display: inline-block;
+    float: left;
+    vertical-align: bottom;
+    margin-left: 20px;
+    line-height: 27px;
+}
+.drivers-header-information .header-link.active {
+    border-bottom: 2px solid #b8c7d8;
+}
+
+.race-results-driver {
+    margin-bottom: 1px;
+}
+
+.race-results-driver div {
+    display: inline-block;
 }

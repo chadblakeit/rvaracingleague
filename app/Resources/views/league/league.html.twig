@@ -2,37 +2,27 @@
 
     {% block content %}
 
-        <div class="register container-fluid container-wrapper">
+        <div class="content-container container-6">
 
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                <a href="{{ path('fos_user_security_logout') }}">
-                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                </a>
-                <br />
-                {{ email }}
-            {% else %}
-                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-            {% endif %}
+            <div style="padding:20px;">
+                {% if register is defined %}
 
-            {% if register is defined %}
+                    <h3 class="form-title">Race League Created</h3>
+                    <p>Thank you for creating your race league. An email has been sent to <strong>{{ email }}</strong> with an activation code.
+                    You must activate your race league before you can invite users.</p>
 
-                <h3 class="text-center">Race League Created</h3>
-                <p>Thank you for creating your race league. An email has been sent to <strong>{{ email }}</strong> with an activation code.
-                You must activate your race league before you can invite users.</p>
+                {% else %}
 
-            {% else %}
+                    <h3 class="form-title">Create League</h3>
 
-                <h3 class="text-center">REGISTER YOUR RACE LEAGUE</h3>
-                <hr>
+                    {{ form_start(form) }}
+                    {{ form_label(form.name) }}
+                    {{ form_errors(form.name) }}
+                    {{ form_widget(form.name) }}
+                    {{ form_end(form) }}
 
-                {{ form_start(form) }}
-                {{ form_label(form.name) }}
-                {{ form_errors(form.name) }}
-                {{ form_widget(form.name) }}
-                {{ form_end(form) }}
-
-            {% endif %}
+                {% endif %}
+            </div>
         </div>
 
     {% endblock %}

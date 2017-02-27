@@ -31,28 +31,29 @@ abstract class RaceResultStandings implements RaceResultStandingsInterface
         $userPositionArr = [];
         $resultsArr = [];
 
-        foreach ($raceResults->getResults() as $key => $driverid) {
-            $resultsArr[intval($driverid)] = $key+1;
-        }
-
-        dump($resultsArr);
-
-        foreach ($raceSubmissions as $submission) {
-            $drivers = $submission->getDrivers();
-            foreach ($drivers as $driver) {
-                $userPositionArr[$submission->getFosUser()->getId()][intval($driver)] = $resultsArr[intval($driver)];
+        if (!is_null($raceResults)) {
+            foreach ($raceResults->getResults() as $key => $driverid) {
+                $resultsArr[intval($driverid)] = $key + 1;
             }
-            $totalPointsArr[$submission->getFosUser()->getId()] = array_sum($userPositionArr[$submission->getFosUser()->getId()]);
-            asort($userPositionArr[$submission->getFosUser()->getId()]);
+
+            //dump($resultsArr);
+
+            foreach ($raceSubmissions as $submission) {
+                $drivers = $submission->getDrivers();
+                foreach ($drivers as $driver) {
+                    $userPositionArr[$submission->getFosUser()->getId()][intval($driver)] = $resultsArr[intval($driver)];
+                }
+                $totalPointsArr[$submission->getFosUser()->getId()] = array_sum($userPositionArr[$submission->getFosUser()->getId()]);
+                asort($userPositionArr[$submission->getFosUser()->getId()]);
+            }
+            asort($totalPointsArr);
         }
-        asort($totalPointsArr);
 
-        dump($totalPointsArr);
-        dump($userPositionArr);
+        //dump($totalPointsArr);
+        //dump($userPositionArr);
 
-        //$this->userTotalPoints = $totalPointsArr;
-        //$this->userDriverPositions = $userPositionArr;
-        //$this->driverResults = $resultsArr;
+        return ['totalPoints' => $totalPointsArr, 'userPositions' => $userPositionArr, 'driverResults' => $resultsArr];
+
     }
 
     public function getUserTotalPoints() {

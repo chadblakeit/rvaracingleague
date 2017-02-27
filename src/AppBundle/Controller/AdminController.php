@@ -52,12 +52,15 @@ class AdminController extends Controller
         $raceResults = $raceResultsRepo->findOneBy(['race' => $raceObj]);
 dump($raceResults);
 dump($driverInfo);
+
+
+
         return $this->render(':admin:raceresults.html.twig', array(
             'race' => $raceObj,
             'role' => $role,
             'drivers' => $drivers,
             'driverInfo' => $driverInfo,
-            'results' => $raceResults->getResults()
+            'results' => (!is_null($raceResults)) ? $raceResults->getResults() : []
         ));
     }
 
@@ -71,7 +74,7 @@ dump($driverInfo);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $ids = [4];
+        $ids = [2];
 
         if (in_array($user->getId(),$ids)) {
             $em = $this->getDoctrine()->getManager();

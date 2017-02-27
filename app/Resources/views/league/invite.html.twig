@@ -2,21 +2,15 @@
 
     {% block content %}
 
-        <div class="register container-fluid container-wrapper">
+        <div class="content-container container-6">
 
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                <a href="{{ path('fos_user_security_logout') }}">
-                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                </a>
+            <div style="padding:20px;">
+                <h3 class="form-title">Invite Team Member</h3>
 
-                <h3 class="text-center">INVITE TEAM MEMBER</h3>
-                <hr>
-
-                {{ league.name }}
+                <strong>League:</strong> {{ league.name }}<br /><br />
 
                 {% if invited is defined and invited is not empty %}
-                    <h4>{{ invited }} has been sent an invitation.</h4>
+                    <h4>{{ invited }} has been sent an invitation.</h4><br />
                 {% endif %}
 
                 {{ form_start(form) }}
@@ -24,12 +18,7 @@
                 {{ form_errors(form.email) }}
                 {{ form_widget(form.email) }}
                 {{ form_end(form) }}
-
-            {% else %}
-                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-            {% endif %}
-
-
+            </div>
 
         </div>
 

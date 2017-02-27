@@ -241,26 +241,38 @@ dump($raceSubmission);
         $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $resultsRepo = $em->getRepository('AppBundle:RaceResults');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
+        $driversRepo = $em->getRepository('AppBundle:Drivers');
 
+        $league = $leagueRepo->findOneBy(['id' => $session->get('activeleague')]);
         $raceObj = $scheduleRepo->findOneBy(['id' => $race]);
-        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj ]);
+        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $league ]);
         $raceResults = $resultsRepo->findOneBy(['race' => $raceObj ]);
         $league = $leagueRepo->findOneBy(['id'=>$session->get('activeleague')]);
+        $drivers = $driversRepo->findAll();
 
-        //$fosUsers = $raceSubmissionsRepo->getUsersFromRaceSubmissions($race,$league);
-        //dump($fosUsers);
+        $driversArr = [];
+        foreach ($drivers as $driver) {
+            $driversArr[$driver->getId()] = ['name' => $driver->getFirstname() . " " . $driver->getLastname(), 'number' => $driver->getNumber()];
+        }
+        dump($driversArr);
 
-        //$raceResultStandings = new RaceResultStandings();
+        $raceResultStandings = RaceResultStandings::setResultStandings($raceResults,$raceSubmissions);
+        $user_ids = array_keys($raceResultStandings['totalPoints']);
+        $fosUsers = $raceSubmissionsRepo->getFosUserSubmissions($user_ids);
+        $userNames = [];
+        foreach ($fosUsers as $userObj) {
+            $userNames[$userObj->getId()] = $userObj->getFirstname() . " " . $userObj->getLastname();
+        }
+        dump($userNames);
+        dump($raceResultStandings);
 
-        //$raceResultStandings->setResultStandings($raceResults,$raceSubmissions);
-        //$raceResultStandings = RaceResultStandings::setResultStandings($raceResults,$raceSubmissions);
-
-//dump($raceResultStandings);
         return $this->render(':race:results.html.twig', array(
-            'race' => $raceObj
-            /*'driverResults' => RaceResultStandings::getDriverResults(),
-            'userTotalPoints' => RaceResultStandings::getUserTotalPoints(),
-            'userDriverPositions' => RaceResultStandings::getUserDriverPositions()*/
+            'race' => $raceObj,
+            'driverResults' => $raceResultStandings['driverResults'],
+            'userTotalPoints' => $raceResultStandings['totalPoints'],
+            'userDriverPositions' => $raceResultStandings['userPositions'],
+            'userNames' => $userNames,
+            'drivers' => $driversArr
         ));
 
     }
@@ -268,7 +280,7 @@ dump($raceSubmission);
     /**
      * @Route("/race/{race}/lineups", name="app.rva.racelineups")
      */
-    public function raceLineupssAction($race, Request $request)
+    public function raceLineupsAction($race, Request $request)
     {
         $user = $this->getUser();
         if (!is_object($user) || !$user instanceof UserInterface) {
@@ -293,21 +305,24 @@ dump($raceSubmission);
 
         $activeLeague = $leagueRepo->findOneBy(['id' => $session->get('activeleague')]);
         $raceObj = $scheduleRepo->findOneBy(['id' => $race]);
-        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj,'league'=>$activeLeague]);
+        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $activeLeague]);
+        $fos_user_ids = array();
         foreach ($raceSubmissions as $key => $submission) {
             $fos_user_ids[] = $submission->getFosUser()->getId();
         }
 
-        $fos_users = $raceSubmissionsRepo->getFosUserSubmissions($fos_user_ids);
         $fosUsers = [];
-        foreach ($fos_users as $users) {
-            $fosUsers[$users->getId()] = $users;
+        if (count($fos_user_ids) > 0) {
+            $fos_users = $raceSubmissionsRepo->getFosUserSubmissions($fos_user_ids);
+            foreach ($fos_users as $users) {
+                $fosUsers[$users->getId()] = $users;
+            }
         }
 
         foreach ($raceSubmissions as $key => $submission) {
             $raceSubmissions[$key]->setFosUser($fosUsers[$submission->getFosUser()->getId()]);
         }
-        dump($raceSubmissions);
+dump($raceSubmissions);
 dump($driversArr);
         return $this->render(':race:lineups.html.twig', array(
             'activeleague' => $activeLeague,

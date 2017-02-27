@@ -6,6 +6,7 @@
 # Apache
 server_name="rva.dev"
 server_alias="dev"
+box_name="rva"
 
 # MySql
 db_name="dev"
@@ -42,7 +43,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder ".", "/vagrant", mount_options:["dmode=777","fmode=666"]
 
   config.vm.provider "virtualbox" do |vb|
-	vb.name = server_name
+	vb.name = box_name
     # Display the VirtualBox GUI when booting the machine
     vb.gui = false
 

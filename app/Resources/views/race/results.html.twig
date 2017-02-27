@@ -2,9 +2,6 @@
 
     {% block styles %}
         <style>
-            .driver-container {
-                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;min-height:35px;
-            }
 
         </style>
     {% endblock %}
@@ -13,32 +10,47 @@
 
         <div class="content-container dimension-10 mobile-dimension-11">
 
-            <h3 class="text-center">Race Results</h3>
-            <hr>
-            <div style="width:820px;margin:0 auto;border:1px solid #000;padding:10px;">
+            <div style="padding:20px;">
 
-                <div style="width:100%;background:#f2f2f2;">
-                    <div>Race: {{ race.racename }}</div>
-
-                    <div>
-                        {% for key, result in userTotalPoints %}
-                            <div style="margin:2px;background:#ccc;padding:5px;">[ {{ loop.index }} ] - :{{ result }}:</div>
-                        {% endfor %}
+                <div class="drivers-header-information">
+                    <div class="racename">
+                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ race.racename }}
                     </div>
+                    <div class="league">
 
+                    </div>
+                </div>
+
+                <div style="width:100%;">
+                    <div class="race-results-container dimension-6">
+                        <div class="race-results-users">
+                            {% if userTotalPoints is defined %}
+                                {% for key, result in userTotalPoints %}
+                                    <div style="background:{% if loop.index == 1 %}gold;{% else %}#e1e1e1;{% endif %}float:left;width:100%;margin-bottom:4px;border:1px solid #ccc;">
+                                        <div style="clear:left;padding:5px;"><strong>{{ loop.index }}.</strong>&nbsp;&nbsp;{{ userNames[key] }} <div class="total-result">{{ result }}</div></div>
+                                        {% for did, driverPosition in userDriverPositions[key] %}
+                                        <div class="results-driver-container">
+                                            <div class="driver"><span class="driver-number">{{ drivers[did].number }}</span>&nbsp;{{ drivers[did].name }}</div>
+                                            <div class="position">{{ driverPosition }}</div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div><div class="race-results-drivers dimension-6">
+                        <div style="width:85%;float:right;background:#f2f2f2;padding:4px;border:1px solid #ccc;">
+                            {% if driverResults is defined %}
+                                {% for did, driverResult in driverResults %}
+                                    <div class="race-results-driver"><div style="width:22px;"><strong>{{ loop.index }}.</strong></div>&nbsp;&nbsp;<div style="width: 22px;text-align:center;">{{ drivers[did].number }}</div> - {{ drivers[did].name }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
 
-    {% endblock %}
-
-    {% block javascripts %}
-        <script type="text/javascript">
-            $(document).ready(function() {
-
-            });
-        </script>
     {% endblock %}
 
 {% endembed %}
