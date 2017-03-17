@@ -41,4 +41,18 @@ class RaceSubmissionsRepository extends EntityRepository
             return null;
         }
     }
+
+    public function getCompletedRaceSubmissions($ids,$league) {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT rs FROM AppBundle:RaceSubmissions rs
+                 WHERE rs.race IN (:ids)
+                 AND rs.league = :league'
+            )->setParameters(array('ids'=>$ids, 'league'=>$league));
+        try {
+            return $query->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

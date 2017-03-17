@@ -54,9 +54,21 @@
                 <div class="home-info-container">
                     <div style="padding:15px;">
                         <h3>League Information</h3><br />
+                        <a href="{{ path('app.rva.raceschedule') }}">Race Schedule</a>&nbsp;&nbsp;&mdash;&nbsp;
+                        <a href="{{ path('app.rva.leaguestandings') }}">Total Standings</a>
+                        <br /><br />
+
+                        <h3>Last Race</h3>
+                        {{ lastrace.race.racename }} - <a href="{{ path('app.rva.raceresults', {'race':lastrace.race.id}) }}">Results</a><br />
+                        {% if lastracewinner is defined and lastracewinner is not empty %}<strong>Winner:</strong> {{ lastracewinner.firstname }} {{ lastracewinner.lastname }} - Points: {{ lastracepoints }}{% endif %}
+                        <br />
+                        <br />
+                        <h3>Active Race</h3>
                         {% if activeleague is not empty %}
-                            Active Race: {{ activerace.racename }} - <a href="{{ path('app.rva.raceresults', {'race':activerace.id}) }}">Race Results</a><br /><br />
-                            Active League: {{ activeleague.name }} - <a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">Race Lineups</a><br /><br />
+                            {{ activerace.racename }} - {{ activerace.location }} - <a href="{{ path('app.rva.raceresults', {'race':activerace.id}) }}">Results</a><br /><br />
+                            League: {{ activeleague.name }}<br />
+                            <a href="{{ path('app.rva.selectteam') }}">My Lineup</a>&nbsp;&mdash;&nbsp;
+                            <a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">Lineups</a><br /><br />
                         {% else %}
                             <span style="font-style:italic">N/A</span>
                         {% endif %}

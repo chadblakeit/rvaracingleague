@@ -132,10 +132,16 @@
 
                 <div class="drivers-header-information">
                     <div class="racename">
-                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ activerace.racename }}
+                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ activerace.racename }} :: <span style="font-size:18px">{{ activerace.location }}</span>
                     </div>
                     <div class="header-link">
                         <a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">Race Lineups</a>
+                    </div>
+                    <div class="header-link active">
+                        <a href="{{ path('app.rva.selectteam') }}">My Lineup</a>
+                    </div>
+                    <div class="header-link">
+                        <a href="{{ path('app.rva.raceschedule') }}">Race Schedule</a>
                     </div>
                     <div class="league">
                         {{ activeleague.name }}
@@ -236,10 +242,14 @@
                             $(".driver-selection.open:first").html(dshtml);
                             $(".driver-selection.open:first").addClass("closed");
                             $(".driver-selection.open:first").removeClass("open");
-
+					
 
                             if ($(".driver-selection.closed").length == 6) {
-                                var data = {
+			    
+			    
+			            $(".team-submission").removeClass("disabled");
+                                    $(".team-submission").addClass("valid");
+                                /*var data = {
                                     d1: $($(".driver-selection")[0]).find('input').val(),
                                     d2: $($(".driver-selection")[1]).find('input').val(),
                                     d3: $($(".driver-selection")[2]).find('input').val(),
@@ -265,7 +275,7 @@
                                     error: function (xhr) {
                                         console.log(xhr);
                                     }
-                                });
+                                });*/
                             }
                         }
                     });

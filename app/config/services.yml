@@ -11,3 +11,8 @@ services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
+
+  app.league_manager:
+      class: AppBundle\Model\LeagueManager
+      arguments: ['@session','@doctrine.orm.entity_manager']

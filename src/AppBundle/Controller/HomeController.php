@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Controller\LeagueInviteController;
+use AppBundle\Model\LeagueManager;
 
 class HomeController extends Controller
 {
@@ -50,7 +51,7 @@ class HomeController extends Controller
         }
 
         $activeLeagueObj = [];
-dump($activeleague);
+        //dump($activeleague);
         // select first league by default
         if (is_null($activeleague)) {
             if (count($myLeaguesObj) >= 1) {
@@ -67,16 +68,22 @@ dump($activeleague);
                 }
             }
         }
-        dump($activeLeagueObj);
+        //dump($activeLeagueObj);
 
         /* --- invited leagues --- */
         $invitedLeagues = $em->getRepository('AppBundle:InviteUser')->findAllInvitedLeagues($user->getEmail());
-        dump($invitedLeagues);
+        //dump($invitedLeagues);
         $LeagueInvite = new LeagueInviteController();
         $LeagueInvite->inviteSalt = $this->getParameter('inviteleaguesalt');
 
+        $LeagueManager = $this->get('app.league_manager');
+        $lastRaceResults = $LeagueManager->getLastRaceResults();
+
         return $this->render(':league:home.html.twig', array(
             'activerace' => $activeRace,
+            'lastrace' => $lastRaceResults['lastRace'],
+            'lastracewinner' => $lastRaceResults['lastRaceWinner'],
+            'lastracepoints' => $lastRaceResults['lastRacePoints'],
             'myleagues' => $myLeaguesObj,
             'activeleague' => $activeLeagueObj,
             'invitedleagues' => $invitedLeagues,
@@ -116,5 +123,30 @@ dump($activeleague);
 
         return $this->redirectToRoute('app.rva.selectteam');
 
+    }
+    /**
+     * @Route("/league/standings", name="app.rva.leaguestandings")
+     */
+    public function standingsAction(Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
+        }
+
+        $totalStandings = $LeagueManager->getTotalStandings();
+
+        dump($totalStandings);
+
+        return $this->render(':league:standings.html.twig', array(
+            'activeleague' => $LeagueManager->getActiveLeague(),
+            'totalpoints' => $totalStandings['totalPoints'],
+            'fosusers' => $totalStandings['fosUsers']
+        ));
     }
 }

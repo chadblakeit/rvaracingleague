@@ -14,9 +14,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Model\RaceResultStandings;
+use AppBundle\Model\LeagueManager;
 
 class RaceController extends Controller
 {
+
     /**
      * @Route("/drivers", name="app.rva.selectteam")
      */
@@ -27,42 +29,29 @@ class RaceController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
-
-        if (is_null($session->get('activerace')) || is_null($session->get('activeleague'))) {
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
             return $this->redirectToRoute("app.rva.home");
         }
 
         $em = $this->getDoctrine()->getManager();
-        $leagueRepo = $em->getRepository('AppBundle:League');
-        $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $driversRepo = $em->getRepository('AppBundle:Drivers');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
 
-        $driversObj = $driversRepo->findBy([
-            'inactive' => 0
-        ]);
-        $activeRace = $scheduleRepo->findOneBy([
-            'activerace' => $session->get('activerace')
-        ]);
-        $activeLeague = $leagueRepo->findOneBy([
-            'id' => $session->get('activeleague')
-        ]);
-        dump($activeLeague);
-        dump($session->get('activeleague'));
+        $driversObj = $driversRepo->findBy(['inactive' => 0]);
+
         $raceSubmission = $raceSubmissionsRepo->findOneBy([
             'fos_user' => $user,
-            'league' => $activeLeague,
-            'race' => $activeRace
+            'league' => $LeagueManager->getActiveLeague(),
+            'race' => $LeagueManager->getActiveRace()
         ]);
-dump($raceSubmission);
+
         $lineup_status = (isset($raceSubmission) && !empty($raceSubmission)) ? 'closed' : 'open';
 
         $myDrivers = [];
         if (!empty($raceSubmission)) {
             $myDrivers = $driversRepo->findAllDriversSubmitted($raceSubmission->getDrivers());
             $driver_class = "submitted";
-            dump($myDrivers);
         } else {
             $driver_class = "unsubmitted";
         }
@@ -71,8 +60,8 @@ dump($raceSubmission);
 
         return $this->render(':race:drivers.html.twig', array(
             'drivers' => $driversObj,
-            'activerace' => $activeRace,
-            'activeleague' => $activeLeague,
+            'activerace' => $LeagueManager->getActiveRace(),
+            'activeleague' => $LeagueManager->getActiveLeague(),
             'racesubmission' => $raceSubmission,
             'mydrivers' => $myDrivers,
             'lineup_status' => $lineup_status,
@@ -91,7 +80,10 @@ dump($raceSubmission);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            //return $this->redirectToRoute("app.rva.home"); // do a return jsonresponse error to redirect
+        }
 
         $raceSubmissions = new RaceSubmissions();
         $isAjax = $request->isXmlHttpRequest();
@@ -112,25 +104,17 @@ dump($raceSubmission);
             ];
 
             $em = $this->getDoctrine()->getManager();
-            $raceScheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
             $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
-            $leagueRepo = $em->getRepository('AppBundle:League');
-            $raceSchedule = $raceScheduleRepo->findOneBy([
-                'id' => $session->get('activerace')
-            ]);
-            $league = $leagueRepo->findOneBy([
-                'id' => $session->get('activeleague')
-            ]);
             $hasRaceSubmitted = $raceSubmissionsRepo->findOneBy([
                 'fos_user' => $user,
-                'league' => $league,
-                'race' => $raceSchedule
+                'league' => $LeagueManager->getActiveLeague(),
+                'race' => $LeagueManager->getActiveRace()
             ]);
 
             if (empty($hasRaceSubmitted)) {
                 $raceSubmissions->setFosUser($user);
-                $raceSubmissions->setRace($raceSchedule);
-                $raceSubmissions->setLeague($league);
+                $raceSubmissions->setRace($LeagueManager->getActiveRace());
+                $raceSubmissions->setLeague($LeagueManager->getActiveLeague());
                 $raceSubmissions->setDrivers($driver_ids);
                 $raceSubmissions->setCreated(new \DateTime());
                 $em->persist($raceSubmissions);
@@ -155,17 +139,20 @@ dump($raceSubmission);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
+        }
+
         $em = $this->getDoctrine()->getManager();
         $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $scheduleObj = $scheduleRepo->findAll();
-        $activeRace = $scheduleRepo->findOneBy(['activerace' => 1]);
 
         dump($scheduleObj);
         return $this->render(':race:schedule.html.twig', array(
             'schedule' => $scheduleObj,
-            'activerace' => $activeRace
+            'activeleague' => $LeagueManager->getActiveLeague()
         ));
-
     }
 
     /**
@@ -182,9 +169,13 @@ dump($raceSubmission);
         $response = [];
         $response['available'] = false;
 
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            //return $this->redirectToRoute("app.rva.home"); // TODO: need to do a jsonresponse error
+        }
+
         if ($isAjax) {
             $response['available'] = true; // first set to true
-            $session = $request->getSession();
             $driver_ids = [
                 $request->request->get('d1'),
                 $request->request->get('d2'),
@@ -196,19 +187,10 @@ dump($raceSubmission);
             sort($driver_ids);
 
             $em = $this->getDoctrine()->getManager();
-            $raceScheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
             $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
-            $leagueRepo = $em->getRepository('AppBundle:League');
-
-            $raceSchedule = $raceScheduleRepo->findOneBy([
-                'id' => $session->get('activerace')
-            ]);
-            $league = $leagueRepo->findOneBy([
-                'id' => $session->get('activeleague')
-            ]);
             $allSubmissions = $raceSubmissionsRepo->findBy([
-                'race' => $raceSchedule,
-                'league' => $league
+                'race' => $LeagueManager->getActiveRace(),
+                'league' => $LeagueManager->getActiveLeague()
             ]);
 
             foreach ($allSubmissions as $submission) {
@@ -235,19 +217,20 @@ dump($raceSubmission);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
+        }
+
         $em = $this->getDoctrine()->getManager();
-        $leagueRepo = $em->getRepository('AppBundle:League');
         $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $resultsRepo = $em->getRepository('AppBundle:RaceResults');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
         $driversRepo = $em->getRepository('AppBundle:Drivers');
 
-        $league = $leagueRepo->findOneBy(['id' => $session->get('activeleague')]);
         $raceObj = $scheduleRepo->findOneBy(['id' => $race]);
-        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $league ]);
+        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $LeagueManager->getActiveLeague() ]);
         $raceResults = $resultsRepo->findOneBy(['race' => $raceObj ]);
-        $league = $leagueRepo->findOneBy(['id'=>$session->get('activeleague')]);
         $drivers = $driversRepo->findAll();
 
         $driversArr = [];
@@ -287,14 +270,12 @@ dump($raceSubmission);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
-
-        if (is_null($session->get('activeleague')) || is_null($session->get('activeleague'))) {
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
             return $this->redirectToRoute("app.rva.home");
         }
 
         $em = $this->getDoctrine()->getManager();
-        $leagueRepo = $em->getRepository('AppBundle:League');
         $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
         $driversRepo = $em->getRepository('AppBundle:Drivers');
@@ -303,9 +284,8 @@ dump($raceSubmission);
             $driversArr[$driver->getId()] = $driver;
         }
 
-        $activeLeague = $leagueRepo->findOneBy(['id' => $session->get('activeleague')]);
         $raceObj = $scheduleRepo->findOneBy(['id' => $race]);
-        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $activeLeague]);
+        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $raceObj, 'league' => $LeagueManager->getActiveLeague()]);
         $fos_user_ids = array();
         foreach ($raceSubmissions as $key => $submission) {
             $fos_user_ids[] = $submission->getFosUser()->getId();
@@ -325,7 +305,7 @@ dump($raceSubmission);
 dump($raceSubmissions);
 dump($driversArr);
         return $this->render(':race:lineups.html.twig', array(
-            'activeleague' => $activeLeague,
+            'activeleague' => $LeagueManager->getActiveLeague(),
             'race' => $raceObj,
             'submissions' => $raceSubmissions,
             'drivers' => $driversArr,

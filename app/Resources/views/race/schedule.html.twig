@@ -11,38 +11,42 @@
 
     {% block content %}
 
-        <div class="register container-fluid container-wrapper">
+        <div class="content-container dimension-10 mobile-dimension-11">
+            <div class="dashboard-container">
+                <div class="drivers-header-information">
+                    <div class="racename">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>Race Schedule
+                    </div>
+                    <div class="league">
+                        {{ activeleague.name }}
+                    </div>
+                </div>
+                <div style="padding-bottom:40px;clear:left;">
 
-            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                <a href="{{ path('fos_user_security_logout') }}">
-                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                </a>
+                    <div style="width:100%;">
 
-                <h3 class="text-center">SCHEDULE</h3>
-                <hr>
-                <div style="width:820px;margin:0 auto;border:1px solid #000;padding:10px;">
+                        <div style="">
 
-                    <div style="width:100%;background:#f2f2f2;">
+                            {% for race in schedule %}
 
-                        {% for race in schedule %}
+                                <div style="width:100%;border-bottom:1px solid #cccccc;padding:10px 0 10px 0;display:table;">
+                                    <div style="width:calc(100%/12*4);display:table-cell;vertical-align:middle;background:#f2f2f2;text-transform:uppercase;font-weight:700;font-size:20px;text-align:center;">{{ race.racename }}</div>
+                                    <div style="width:calc(100%/12*4);display:table-cell;vertical-align:middle;background:#e1e1e1;">
+                                        <div style="padding:5px;">
+                                            {{ race.racedate|date('l M. d / g:i A') }}<br />{{ race.trackname }}<br />length: {{ race.tracklength }} mi
+                                        </div>
+                                    </div>
+                                    <div style="width:calc(100%/12*3);display:table-cell;vertical-align:middle;background:#cbd2db;text-align:center;"><a href="{{ path('app.rva.raceresults', {'race':race.id}) }}">Results</a></div>
+                                </div>
 
-                            <div style="border-bottom:1px solid #000;padding:10px 0 10px 0;">
-                                <div style="width:100px;display:inline-block;background:burlywood;"></div>
-                                <div style="width:250px;display:inline-block;background:blanchedalmond;text-transform:uppercase;font-weight:700;font-size:20px;text-align:center;">{{ race.racename }}</div>
-                                <div style="width:300px;display:inline-block;background:#bfe5f1;">{{ race.racedate|date('l M. d / g:i A') }}<br />{{ race.trackname }}<br />length: {{ race.tracklength }} mi</div>
-                                <div style="width:100px;display:inline-block;background:gainsboro;"><a href="#">Results</a></div>
-                            </div>
+                            {% endfor %}
 
-                        {% endfor %}
-
+                        </div>
                     </div>
                 </div>
 
-            {% else %}
-                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
-            {% endif %}
 
+            </div>
         </div>
 
     {% endblock %}
