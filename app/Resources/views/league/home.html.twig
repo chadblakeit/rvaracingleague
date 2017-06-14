@@ -27,7 +27,7 @@
                                     </div>
                                 {% endfor %}
                                 {% if myleagues is defined and myleagues|length == 0 %}
-                                    <span style="font-style:italic;">No Active Leagues</span>
+                                    <span style="font-style:italic;">No Active Leagues</span>&nbsp;-&nbsp;<a href="{{ path('app.rva.leaguecreate') }}">Create League</a>
                                 {% endif %}
 
                                 {% if invitedleagues is defined and invitedleagues|length > 0 %}
