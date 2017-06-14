@@ -55,4 +55,5 @@ class RaceSubmissionsRepository extends EntityRepository
             return null;
         }
     }
+
 }

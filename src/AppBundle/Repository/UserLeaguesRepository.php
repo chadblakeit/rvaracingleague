@@ -46,4 +46,33 @@ class UserLeaguesRepository extends EntityRepository
             return null;
         }
     }
+
+    public function getUsersIDsNotInArray($ids,$league) {
+        if (empty($ids)) {
+            $query = $this->getEntityManager()
+                ->createQuery(
+                    'SELECT ul, u.email, u.firstname, u.lastname, u.username
+                     FROM AppBundle:UserLeagues ul
+                     JOIN AppBundle:User u
+                     WHERE u = ul.fos_user
+                     WHERE ul.league = :league'
+                )->setParameters(array('league' => $league));
+        } else {
+            $query = $this->getEntityManager()
+                ->createQuery(
+                    'SELECT ul, u.email, u.firstname, u.lastname, u.username
+                     FROM AppBundle:UserLeagues ul
+                     JOIN AppBundle:User u
+                     WHERE u = ul.fos_user
+                     WHERE ul.league = :league
+                     AND u.id NOT IN (:ids)'
+                )->setParameters(array('league' => $league, 'ids' => $ids));
+        }
+        try {
+            dump($query->getResult());
+            return $query->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

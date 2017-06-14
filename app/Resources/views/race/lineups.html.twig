@@ -101,15 +101,6 @@
                     <div class="racename">
                         <i class="fa fa-tachometer" aria-hidden="true"></i>{{ race.racename }} :: <span style="font-size:18px">{{ race.location }}</span>
                     </div>
-                    <div class="header-link active">
-                        <a href="{{ path('app.rva.racelineups', {'race':race.id}) }}">Race Lineups</a>
-                    </div>
-                    <div class="header-link">
-                        <a href="{{ path('app.rva.selectteam') }}">My Lineup</a>
-                    </div>
-                    <div class="header-link">
-                        <a href="{{ path('app.rva.raceschedule') }}">Race Schedule</a>
-                    </div>
                     <div class="league">
                         {{ activeleague.name }}
                     </div>
@@ -120,12 +111,16 @@
                             <div class="lineup-container">
                                 <div class="lineup-wrapper">
                                     <div class="lineup-user">{{ users[submission.fosUser.id].firstname }}&nbsp;{{ users[submission.fosUser.id].lastname }}</div>
-                                    {% for driver_id in submission.drivers %}
-                                        <div class="lineup-driver">
+                                    {% if show_lineup %}
+				    {% for driver_id in submission.drivers %}				    					
+                                        <div class="lineup-driver">					    	
                                             <div class="lineup-driver-number">{{ drivers[driver_id].number }}</div>
                                             <div class="lineup-driver-name">{{ drivers[driver_id].firstname }}&nbsp;{{ drivers[driver_id].lastname }}</div>
-                                        </div>
+                                        </div>					
                                     {% endfor %}
+				    {% else %}
+				    	<div class="lineup-driver">-- <i>hidden</i> --</div>
+				    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

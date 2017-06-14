@@ -101,12 +101,16 @@
             .header-link a, .header-link a:active, .header-link a:visited {
                 text-decoration: none;
             }
-            .edit-drivers {
+            .edit-drivers, .fa-lock {
                 position: absolute;
                 right: 10px;
                 top: 8px;
                 font-size: 24px;
                 cursor: pointer;
+            }
+            .fa-lock {
+                color: red;
+                cursor: default;
             }
             @media (max-width: 660px) {
                 .mobile-dimension-11 {
@@ -134,7 +138,7 @@
                     <div class="racename">
                         <i class="fa fa-tachometer" aria-hidden="true"></i>{{ activerace.racename }} :: <span style="font-size:18px">{{ activerace.location }}</span>
                     </div>
-                    <div class="header-link">
+                    <!--<div class="header-link">
                         <a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">Race Lineups</a>
                     </div>
                     <div class="header-link active">
@@ -142,7 +146,7 @@
                     </div>
                     <div class="header-link">
                         <a href="{{ path('app.rva.raceschedule') }}">Race Schedule</a>
-                    </div>
+                    </div>-->
                     <div class="league">
                         {{ activeleague.name }}
                     </div>
@@ -170,7 +174,7 @@
                                         Select Your Lineup
                                     {% endif %}
                                 </h3>
-                                {% if mydrivers and race_locked == false %}<i class="fa fa-pencil-square-o edit-drivers" aria-hidden="true"></i>{% endif %}
+                                {% if mydrivers and race_locked == false %}<i class="fa fa-pencil-square-o edit-drivers" aria-hidden="true"></i>{% elseif race_locked == true %}<i class="fa fa-lock" aria-hidden="true"></i>{% endif %}
                             </div>
                             <div class="driver-selection {{ lineup_status }}">
                                 {% if mydrivers %}

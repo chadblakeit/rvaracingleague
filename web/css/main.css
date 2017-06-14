@@ -52,9 +52,10 @@ html, body {
 
 .header-logo {
     display: inline-block;
-    width: 200px;
+    width: 60px;
     position: relative;
-    line-height: 60px;
+    line-height: 50px;
+    font-size: 30px;
 }
 
 .header-user {
@@ -129,6 +130,14 @@ html, body {
 .user-dropdown ul li a, .user-dropdown ul li a:active, .user-dropdown ul li a:visited {
     text-decoration: none;
 }
+
+.main-menu { display: inline-block; }
+.main-menu ul { list-style-type: none; }
+.main-menu ul li { display: inline-block; padding: 8px; margin-right: 10px; background: #ffffff; border-radius: 6px; }
+.main-menu ul li i { margin-right: 5px; }
+.main-menu ul li a { text-decoration: none; }
+.main-menu ul li:hover { background: #e3e9ef; }
+.main-menu ul li:hover a { }
 
 .message-container {
     height: 100px;

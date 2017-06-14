@@ -96,6 +96,7 @@ class LeagueManager
             $fos_users = $raceSubmissionsRepo->getFosUserSubmissions($fos_user_ids);
             foreach ($fos_users as $users) {
                 $fosUsers[$users->getId()] = $users;
+		$statsRaceWinners[$users->getId()] = 0;
             }
         }
 
@@ -104,6 +105,9 @@ class LeagueManager
 
         $totalPointsArr = [];
         $fos_user_ids = [];
+        $individualRaceResults = [];
+
+        $i=1;
 
         foreach ($raceSubmissions as $submission) {
             $drivers = $submission->getDrivers();
@@ -114,12 +118,46 @@ class LeagueManager
                 $totalPointsArr[$submission->getFosUser()->getId()] = 0;
             }
             $totalPointsArr[$submission->getFosUser()->getId()] += array_sum($userPositionArr[$submission->getFosUser()->getId()]);
+            $individualRaceResults[$submission->getRace()->getId()][$submission->getFosUser()->getId()] = array_sum($userPositionArr[$submission->getFosUser()->getId()]);
             $userPositionArr[$submission->getFosUser()->getId()] = [];
+            $statsRaceWinners[$submission->getFosUser()->getId()] = 0;
+            $i++;
         }
 
+        
+
+        foreach ($individualRaceResults as $rid => $raceresults) {
+            asort($raceresults);
+            $individualRaceResults[$rid] = $raceresults;
+            $arr = reset($raceresults);
+            $winner = key($raceresults);
+            $statsRaceWinners[$winner] += 1;
+        }
+        //dump($individualRaceResults);
+        //dump($statsRaceWinners);
         asort($totalPointsArr);
 
-        return ['fosUsers' => $fosUsers, 'totalPoints' => $totalPointsArr];
+        return ['fosUsers' => $fosUsers, 'totalPoints' => $totalPointsArr, 'raceWinners' => $statsRaceWinners];
+    }
+
+    public function lineupReminder()
+    {
+        $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $submittedLineups = $raceSubmissionsRepo->findBy(['league'=>$this->getActiveLeague(), 'race'=>$this->getActiveRace()]);
+        if (!is_null($submittedLineups) && !empty($submittedLineups)) {
+            foreach ($submittedLineups as $lineup) {
+                $uids[] = $lineup->getFosUser()->getId();
+            }
+        } else {
+            $uids = [];
+        }
+
+        $unsubmittedUsers = $userLeaguesRepo->getUsersIDsNotInArray($uids,$this->getActiveLeague());
+        dump($unsubmittedUsers);
+        dump($this->getActiveLeague());
+        dump($this->getActiveRace());
+        return $unsubmittedUsers;
     }
 
 }

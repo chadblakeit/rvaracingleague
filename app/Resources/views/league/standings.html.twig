@@ -19,7 +19,7 @@
             <div class="dashboard-container">
                 <div class="drivers-header-information">
                     <div class="racename">
-                        <i class="fa fa-calendar" aria-hidden="true"></i>League Standings
+                        <i class="fa fa-trophy" aria-hidden="true"></i>League Standings
                     </div>
                     <div class="league">
                         {{ activeleague.name }}
@@ -29,10 +29,17 @@
 
                     <div style="width:100%;">
                     <table border="0" cellpadding="0" cellspacing="2" style="width:100%;" class="standings-table">
+                        <tr>
+                            <th>#</th>
+                            <th></th>
+                            <th>Wins</th>
+                            <th>Total</th>
+                        </tr>
                         {% for uid, points in totalpoints %}
                             <tr>
                                 <td style="width:50px;text-align:center;">{{ loop.index }}</td>
                                 <td>{{ fosusers[uid].firstname }} {{ fosusers[uid].lastname }}</td>
+                                <td style="width:100px;text-align:center;">{{ racewinners[uid] }}</td>
                                 <td style="width:100px;text-align:center;">{{ points }}</td>
                             </tr>
                         {% endfor %}

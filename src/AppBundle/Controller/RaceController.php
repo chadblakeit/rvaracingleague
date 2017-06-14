@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\RaceSchedule;
 use AppBundle\Entity\League;
 use AppBundle\Entity\RaceSubmissions;
+use AppBundle\Entity\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,7 +57,10 @@ class RaceController extends Controller
             $driver_class = "unsubmitted";
         }
 
-        $racelocked = false;
+        $adminRepo = $em->getRepository('AppBundle:Admin');
+        $adminResults = $adminRepo->findOneBy(['id' => 1]);
+        $racelocked = ($adminResults->getLocked()) ? true : false;
+        //$racelocked = false;
 
         return $this->render(':race:drivers.html.twig', array(
             'drivers' => $driversObj,
@@ -151,6 +155,7 @@ class RaceController extends Controller
         dump($scheduleObj);
         return $this->render(':race:schedule.html.twig', array(
             'schedule' => $scheduleObj,
+            'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague()
         ));
     }
@@ -250,6 +255,7 @@ class RaceController extends Controller
         dump($raceResultStandings);
 
         return $this->render(':race:results.html.twig', array(
+            'activerace' => $LeagueManager->getActiveRace(),
             'race' => $raceObj,
             'driverResults' => $raceResultStandings['driverResults'],
             'userTotalPoints' => $raceResultStandings['totalPoints'],
@@ -304,12 +310,17 @@ class RaceController extends Controller
         }
 dump($raceSubmissions);
 dump($driversArr);
+
+	$show_lineup = (count($raceSubmissions) > 0) ? true : false;
+
         return $this->render(':race:lineups.html.twig', array(
             'activeleague' => $LeagueManager->getActiveLeague(),
+            'activerace' => $LeagueManager->getActiveRace(),
             'race' => $raceObj,
             'submissions' => $raceSubmissions,
             'drivers' => $driversArr,
-            'users' => $fosUsers
+            'users' => $fosUsers,
+	    'show_lineup' => $show_lineup
         ));
     }
 

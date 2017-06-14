@@ -15,7 +15,8 @@
         {% block header %}
             <div class="header-container">
                 <div class="header-info-container dimension-10">
-                    <div class="header-logo"><a href="{{ path("app.rva.home") }}">RVA Racing League</a></div>
+                    <div class="header-logo"><a href="{{ path("app.rva.home") }}"><i class="fa fa-home" aria-hidden="true"></i></a></div>
+		            {% block mainmenu %}{% embed '::mainmenu.html.twig' %}{% endembed %}{% endblock %}
                     <div class="header-user">
                         <div class="avatar"><i class="fa fa-user-circle" aria-hidden="true"></i></div>
                         <div class="user">
@@ -23,7 +24,7 @@
                                 {{ app.user.username }}
                                 <div class="user-dropdown">
                                     <ul>
-                                        <li><a href="#">Account</a></li>
+                                        <li><a href="{{ path('/profile') }}">Account</a></li>
                                         <li><a href="{{ path('fos_user_security_logout') }}">{{ 'layout.logout'|trans({}, 'FOSUserBundle') }}</a></li>
                                     </ul>
                                 </div>

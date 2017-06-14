@@ -16,3 +16,12 @@ services:
   app.league_manager:
       class: AppBundle\Model\LeagueManager
       arguments: ['@session','@doctrine.orm.entity_manager']
+
+
+  app.drivers_manager:
+      class: AppBundle\Model\DriversManager
+      arguments: ['@session','@doctrine.orm.entity_manager']
+
+  app.email_manager:
+      class: AppBundle\Model\EmailManager
+      arguments: ['@mailer', '@twig']

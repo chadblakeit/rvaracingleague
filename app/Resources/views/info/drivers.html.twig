@@ -1,0 +1,69 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .driver-stats-container { border: 1px solid #8795a3; vertical-align: top; clear: both; }
+            .driver-stats-container ul { list-style-type: none; }
+            .driver-stats-container ul li { clear: both; margin-bottom: 2px; }
+
+            .driver-stats-container ul.driver-points li .place { width:40px;background:#f2f2f2;padding:5px;margin-right:2px;text-align:center;display:inline-block; float:left; }
+            .driver-stats-container ul.driver-points li .info { background:#f2f2f2;overflow:hidden;padding:5px; }
+            .driver-stats-container ul.driver-points li .stats { width:70px;float:right;text-align:center;padding:5px;background:#f2f2f2;margin-left:2px; }
+            .driver-stats-container ul.driver-points li .points { width:100px; }
+
+
+        </style>
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="content-container dimension-10 mobile-dimension-11">
+            <div class="dashboard-container">
+                <div class="drivers-header-information">
+                    <div class="racename">
+                        <i class="fa fa-car" aria-hidden="true"></i>Driver Stats
+                    </div>
+                    <div class="league">
+                        {{ activeleague.name }}
+                    </div>
+                </div>
+                <div style="padding-bottom:40px;clear:left;">
+
+                    <div style="width:100%;">
+
+                        <div>
+                            <div style="width:40px;text-align:center;display:inline-block;padding:5px;">#</div>
+                            <div style="width:100px;float:right;margin-left:2px;margin-right:1px;padding:5px;text-align:center;">Points</div>
+                            <div style="width:70px;float:right;margin-left:2px;padding:5px;text-align:center;">Wins</div>
+                            <div style="width:70px;float:right;margin-left:2px;padding:5px;text-align:center;">Top 5s</div>
+                            <div style="width:70px;float:right;padding:5px;text-align:center;">Top 10s</div>
+                        </div>
+                        <div class="driver-stats-container">
+                            <ul class="driver-points">
+                            {% for rid, points in driverpoints %}
+                                <li><div class="place">{{ loop.index }}</div><div class="stats points">{{ points }}</div><div class="stats">{{ driverwins[rid] }}</div><div class="stats">{{ drivertopfives[rid] }}</div><div class="stats">{{ drivertoptens[rid] }}</div><div class="info"><div style="width:40px;text-align:center;display:inline-block;">{{ drivers[rid].number }}</div><div style="display:inline-block;">{{ drivers[rid].firstname }} {{ drivers[rid].lastname }}</div></div></li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+
+                        ** The points are NOT nascar points. They are just the total of the drivers' finish positions. And any driver that misses a race, 50pts are added.
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+    {% endblock %}
+
+    {% block javascripts %}
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+            });
+        </script>
+    {% endblock %}
+
+{% endembed %}
+

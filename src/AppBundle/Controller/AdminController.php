@@ -6,6 +6,7 @@ use AppBundle\Entity\RaceResults;
 use AppBundle\Entity\RaceSchedule;
 use AppBundle\Entity\League;
 use AppBundle\Entity\RaceSubmissions;
+use AppBundle\Entity\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +16,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use AppBundle\Model\LeagueManager;
 
 class AdminController extends Controller
 {
@@ -34,6 +36,11 @@ class AdminController extends Controller
         if (is_null($race)) {
             // redirect back to schedule
             return $this->redirectToRoute("app.rva.raceschedule");
+        }
+	
+	    $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -56,6 +63,8 @@ dump($driverInfo);
 
 
         return $this->render(':admin:raceresults.html.twig', array(
+	    'activerace' => $LeagueManager->getActiveRace(),
+            'activeleague' => $LeagueManager->getActiveLeague(),
             'race' => $raceObj,
             'role' => $role,
             'drivers' => $drivers,
@@ -136,6 +145,61 @@ dump($driverInfo);
         }
 
         return new Response("<html><body>submit race results</body></html>");
+    }
+
+    /**
+     * @Route("/admin/lockrace/{locked}", name="app.rva.lockrace")
+     */
+    public function lockRaceAction($locked="", Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $role = $user->getRoles();
+        if (!in_array("ROLE_SUPER_ADMIN",$role)) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $adminRepo = $em->getRepository('AppBundle:Admin');
+        $adminResults = $adminRepo->findOneBy(['id' => 1]);
+        $admin_locked = $adminResults->getLocked();
+
+        if ($locked == "") {
+            $locked = $admin_locked;
+        } else {
+            // save lock/unlock
+            $adminResults->setLocked($locked);
+            $em->persist($adminResults);
+            $em->flush();
+        }
+
+        $lock_link = ($locked) ? "0" : "1";
+        $lock_link_text = ($locked) ? "Unlock" : "Lock";
+        $link = "<a href='/admin/lockrace/$lock_link'>$lock_link_text</a>";
+
+        return new Response("<html><body><h2>Admin</h2><div>Locked: $locked - $link</div></body></html>");
+    }
+
+    /**
+     * @Route("/admin/lineupreminder", name="app.rva.lineupreminder")
+     */
+    public function lineupReminderAction(Request $request)
+    {
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
+        }
+
+        $EmailManager = $this->get('app.email_manager');
+
+        $unsubmittedUsers = $LeagueManager->lineupReminder();
+
+        $EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
+
+        return new Response("<html><body><h2>Admin</h2><div>Lineup Reminder</div></body></html>");
     }
 
 }

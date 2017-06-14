@@ -124,29 +124,5 @@ class HomeController extends Controller
         return $this->redirectToRoute('app.rva.selectteam');
 
     }
-    /**
-     * @Route("/league/standings", name="app.rva.leaguestandings")
-     */
-    public function standingsAction(Request $request)
-    {
-        $user = $this->getUser();
-        if (!is_object($user) || !$user instanceof UserInterface) {
-            throw new AccessDeniedException('This user does not have access to this section.');
-        }
 
-        $LeagueManager = $this->get('app.league_manager');
-        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
-            return $this->redirectToRoute("app.rva.home");
-        }
-
-        $totalStandings = $LeagueManager->getTotalStandings();
-
-        dump($totalStandings);
-
-        return $this->render(':league:standings.html.twig', array(
-            'activeleague' => $LeagueManager->getActiveLeague(),
-            'totalpoints' => $totalStandings['totalPoints'],
-            'fosusers' => $totalStandings['fosUsers']
-        ));
-    }
 }
