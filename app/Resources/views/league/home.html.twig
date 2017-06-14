@@ -54,7 +54,7 @@
                 <div class="home-info-container">
                     <div style="padding:15px;">
                         <h3>Last Race</h3>
-                        {{ lastrace.race.racename }} - <a href="{{ path('app.rva.raceresults', {'race':lastrace.race.id}) }}">Results</a><br />
+                        {% if lastrace.race is defined and  lastrace.race is not empty %}{{ lastrace.race.racename }} - <a href="{{ path('app.rva.raceresults', {'race':lastrace.race.id}) }}">Results</a><br />{% endif %}
                         {% if lastracewinner is defined and lastracewinner is not empty %}<strong>Winner:</strong> {{ lastracewinner.firstname }} {{ lastracewinner.lastname }} - Points: {{ lastracepoints }}{% endif %}
                         <br />
                         <br />

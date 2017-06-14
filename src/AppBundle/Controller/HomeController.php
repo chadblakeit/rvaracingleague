@@ -29,41 +29,39 @@ class HomeController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
+        $LeagueManager = $this->get('app.league_manager');
+
+dump($LeagueManager->getActiveRace());
+dump($LeagueManager->getActiveLeague());
+
+        //$session = $request->getSession();
 
         $em = $this->getDoctrine()->getManager();
-        $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $leagueRepo = $em->getRepository('AppBundle:UserLeagues');
 
         // TODO: make sure you select leagues that aren't disabled
         $myLeaguesObj = $leagueRepo->findAllMyActiveLeagues($user);
-
-        $activeRace = $scheduleRepo->findOneBy([
-            'activerace' => 1
-        ]);
-        $session->set('activerace',$activeRace->getId());
-
-        $activeleague = $session->get("activeleague");
         dump($myLeaguesObj);
-
-        if (empty($myLeaguesObj)) {
-            $session->set('activeleague',null);
-        }
+        //$activeleague = $session->get("activeleague");
+        //if (empty($myLeaguesObj)) {
+            //$session->set('activeleague',null);
+        //}
 
         $activeLeagueObj = [];
         //dump($activeleague);
         // select first league by default
-        if (is_null($activeleague)) {
+        if (is_null($LeagueManager->getActiveLeague())) {
             if (count($myLeaguesObj) >= 1) {
-                $session->set('activeleague',$myLeaguesObj[0]->getLeague()->getId());
-                $activeleague = $session->get("activeleague");
-                $activeLeagueObj = $myLeaguesObj[0]->getLeague();
+                $LeagueManager->initiateActiveLeague($myLeaguesObj[0]->getLeague());
+                //$session->set('activeleague',$myLeaguesObj[0]->getLeague()->getId());
+                //$activeleague = $session->get("activeleague");
+                //$activeLeagueObj = $myLeaguesObj[0]->getLeague();
             }
         } else {
             foreach ($myLeaguesObj as $userLeague) {
-                dump($userLeague);
-                if ($userLeague->getLeague()->getId() == $activeleague) {
-                    $activeLeagueObj = $userLeague->getLeague();
+                if ($userLeague->getLeague()->getId() == $LeagueManager->getActiveLeague()->getId()) {
+                    //$activeLeagueObj = $userLeague->getLeague();
+                    dump($userLeague);
                     break;
                 }
             }
@@ -76,16 +74,15 @@ class HomeController extends Controller
         $LeagueInvite = new LeagueInviteController();
         $LeagueInvite->inviteSalt = $this->getParameter('inviteleaguesalt');
 
-        $LeagueManager = $this->get('app.league_manager');
         $lastRaceResults = $LeagueManager->getLastRaceResults();
 
         return $this->render(':league:home.html.twig', array(
-            'activerace' => $activeRace,
+            'activerace' => $LeagueManager->getActiveRace(),
             'lastrace' => $lastRaceResults['lastRace'],
             'lastracewinner' => $lastRaceResults['lastRaceWinner'],
             'lastracepoints' => $lastRaceResults['lastRacePoints'],
             'myleagues' => $myLeaguesObj,
-            'activeleague' => $activeLeagueObj,
+            'activeleague' => $LeagueManager->getActiveLeague(),
             'invitedleagues' => $invitedLeagues,
             'LeagueInvite' => $LeagueInvite
         ));

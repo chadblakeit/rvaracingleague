@@ -25,7 +25,7 @@ class EmailManager
             ->setBody(
                 $this->twig->render(
                     $twig_template,
-                    array('name' => $data['name'], 'league' => $data['league'], 'race' => $data['race'])
+                    $data
                 ),
                 'text/html'
             )

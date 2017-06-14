@@ -21,17 +21,36 @@ class LeagueManager
         $this->em = $em;
         $this->activeleague_id = $this->session->get('activeleague'); // this is a string for some reason
         $this->activerace_id = $this->session->get('activerace');
-        if (!is_null($this->activerace_id) || !is_null($this->activeleague_id)) {
-            $this->setActiveLeague();
+        if (!is_null($this->activerace_id)) {
             $this->setActiveRace();
+        } else {
+            $this->initiateActiveRace();
         }
+        if (!is_null($this->activeleague_id)) {
+            $this->setActiveLeague();
+        }
+    }
+
+    public function initiateActiveRace()
+    {
+        $raceScheduleRepo = $this->em->getRepository('AppBundle:RaceSchedule');
+        $activeRace = $raceScheduleRepo->findOneBy(['activerace' => 1]);
+        $this->session->set('activerace',$activeRace->getId());
+        $this->activerace_id = $activeRace->getId();
+        $this->activeRace = $activeRace;
     }
 
     public function setActiveLeague()
     {
         $leagueRepo = $this->em->getRepository('AppBundle:League');
         $this->activeLeague = $leagueRepo->findOneBy(['id' => $this->activeleague_id]);
-        //dump($this->activeLeague);
+    }
+
+    public function initiateActiveLeague($league)
+    {
+        $this->activeleague_id = $league->getId();
+        $this->session->set('activeleague', $this->activeleague_id);
+        $this->activeLeague = $league;
     }
 
     public function getActiveLeague()
@@ -43,7 +62,6 @@ class LeagueManager
     {
         $raceScheduleRepo = $this->em->getRepository('AppBundle:RaceSchedule');
         $this->activeRace = $raceScheduleRepo->findOneBy(['id' => $this->activerace_id]);
-        //dump($this->activeRace);
     }
 
     public function getActiveRace()
@@ -53,6 +71,10 @@ class LeagueManager
 
     public function getLastRaceResults()
     {
+        if (is_null($this->getActiveLeague())) {
+            return array('lastRace' => [], 'lastRaceWinner' => [], 'lastRacePoints' => []);
+        }
+
         $userRepo = $this->em->getRepository('AppBundle:User');
         $raceScheduleRepo = $this->em->getRepository('AppBundle:RaceSchedule');
         $raceResultsRepo = $this->em->getRepository('AppBundle:RaceResults');
