@@ -21,7 +21,7 @@ class RaceController extends Controller
 {
 
     /**
-     * @Route("/drivers", name="app.rva.selectteam")
+     * @Route("/lineup", name="app.rva.mylineup")
      */
     public function driverSelectionAction(Request $request)
     {
@@ -62,7 +62,9 @@ class RaceController extends Controller
         $racelocked = ($adminResults->getLocked()) ? true : false;
         //$racelocked = false;
 
-        return $this->render(':race:drivers.html.twig', array(
+        dump($LeagueManager->getActiveRace());
+
+        return $this->render(':race:mylineup.html.twig', array(
             'drivers' => $driversObj,
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
@@ -322,6 +324,10 @@ dump($driversArr);
             'users' => $fosUsers,
 	    'show_lineup' => $show_lineup
         ));
+    }
+
+    public function displayTrackLength($tracklength) {
+
     }
 
 }

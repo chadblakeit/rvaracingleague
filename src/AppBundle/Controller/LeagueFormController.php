@@ -68,7 +68,7 @@ class LeagueFormController extends Controller
                     'text/html'
                 );
             $test = $this->get('mailer')->send($message);
-
+dump($test);
             return $this->render(':league:league.html.twig', array(
                 'register' => true,
                 'email' => $user->getEmail(),
@@ -177,8 +177,6 @@ class LeagueFormController extends Controller
             'id' => $session->get('activeleague')
         ]);
 
-
-        dump($user);
         if ($form->isSubmitted() && $form->isValid()) {
             dump($league);
 
@@ -190,7 +188,7 @@ class LeagueFormController extends Controller
             $em->persist($inviteUser);
             $em->flush();
 
-            /*$message = \Swift_Message::newInstance()
+            $message = \Swift_Message::newInstance()
                 ->setSubject('You\'ve been invited to join '.$league->getName().' of the richmond racing league')
                 ->setFrom('web@rvaracingleague.com/')
                 ->setTo($data['email'])
@@ -207,7 +205,7 @@ class LeagueFormController extends Controller
                     ),
                     'text/html'
                 );
-            $test = $this->get('mailer')->send($message);*/
+            $test = $this->get('mailer')->send($message);
             $invited = $data['email'];
         }
 

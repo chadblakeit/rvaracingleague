@@ -5,6 +5,7 @@
             .active-league { display:block;background:#dce6ef;padding:15px 10px 15px 10px;color:#000000;text-align:left;cursor:pointer;border-radius:4px;font-weight:700;font-size:22px;margin-bottom:10px; }
             .active-league:hover { background: #6d8dbf; color: #ffffff;  }
             .active-league .fa-flag-checkered { margin-left: 5px; margin-right: 10px; color: #1a2d4c; }
+            .create-league-container { margin-top: 10px; background: #f2f2f2; border-top: 1px solid #ccc; padding: 10px; }
         </style>
     {% endblock %}
 
@@ -46,6 +47,10 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
+
+                                <div class='create-league-container'>
+                                    <a href="{{ path("app.rva.leaguecreate") }}">Create League</a>
+                                </div>
 
                             </div>
                         </div>

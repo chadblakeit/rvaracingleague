@@ -16,9 +16,9 @@ class EmailManager
         $this->twig = $twig;
     }
 
-    public function sendEmail($to,$twig_template,$data) {
+    public function sendEmail($subject,$to,$twig_template,$data) {
         $message = \Swift_Message::newInstance()
-            ->setSubject('Submit Lineup Reminder')
+            ->setSubject($subject)
             ->setFrom('chad@rvaracingleague.com')
             ->setCc('chadblakeit@gmail.com')
             ->setTo($to)
@@ -37,7 +37,7 @@ class EmailManager
         foreach ($unsubmittedUsers as $userArr) {
             $name = $userArr['firstname'] . " " . $userArr['lastname'];
             if (trim($name) == "") { $name = $userArr['username']; }
-            $this->sendEmail("tblake521@gmail.com","emails/lineupreminder.html.twig",['name'=>$name,'league'=>$league->getName(),'race'=>$race->getRacename()]);
+            $this->sendEmail("Submit Lineup Reminder","tblake521@gmail.com","emails/lineupreminder.html.twig",['name'=>$name,'league'=>$league->getName(),'race'=>$race->getRacename()]);
         }
     }
 

@@ -88,10 +88,17 @@ class LeagueManager
         $raceResultStandings = RaceResultStandings::setResultStandings($lastRace,$raceSubmissions);
 
         $userIDs = array_keys($raceResultStandings['totalPoints']);
-        $userWinner = $userRepo->findOneBy(['id' => $userIDs[0]]);
+        if (isset($userIDs[0])) {
+            $userWinner = $userRepo->findOneBy(['id' => $userIDs[0]]);
+            $lastRacePoints = $raceResultStandings['totalPoints'][$userIDs[0]];
+        } else {
+            $userWinner = [];
+            $lastRacePoints = [];
+        }
+
         dump($userWinner);
 
-        return array('lastRace' => $lastRace, 'lastRaceWinner' => $userWinner, 'lastRacePoints' => $raceResultStandings['totalPoints'][$userIDs[0]]);
+        return array('lastRace' => $lastRace, 'lastRaceWinner' => $userWinner, 'lastRacePoints' => $lastRacePoints);
     }
 
     public function getTotalStandings()

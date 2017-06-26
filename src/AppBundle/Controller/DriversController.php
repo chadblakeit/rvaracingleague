@@ -39,7 +39,7 @@ class DriversController extends Controller
 
         $drivers = $DriversManager->getDriverStats();
 
-        return $this->render(':info:drivers.html.twig', array(
+        return $this->render(':info:mylineup.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
             'driverpoints' => $DriversManager->getDriverPoints(),

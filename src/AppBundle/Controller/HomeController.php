@@ -30,11 +30,10 @@ class HomeController extends Controller
         }
 
         $LeagueManager = $this->get('app.league_manager');
+        $LeagueManager->initiateActiveRace();
 
 dump($LeagueManager->getActiveRace());
 dump($LeagueManager->getActiveLeague());
-
-        //$session = $request->getSession();
 
         $em = $this->getDoctrine()->getManager();
         $leagueRepo = $em->getRepository('AppBundle:UserLeagues');
@@ -42,35 +41,16 @@ dump($LeagueManager->getActiveLeague());
         // TODO: make sure you select leagues that aren't disabled
         $myLeaguesObj = $leagueRepo->findAllMyActiveLeagues($user);
         dump($myLeaguesObj);
-        //$activeleague = $session->get("activeleague");
-        //if (empty($myLeaguesObj)) {
-            //$session->set('activeleague',null);
-        //}
 
-        $activeLeagueObj = [];
-        //dump($activeleague);
         // select first league by default
         if (is_null($LeagueManager->getActiveLeague())) {
             if (count($myLeaguesObj) >= 1) {
                 $LeagueManager->initiateActiveLeague($myLeaguesObj[0]->getLeague());
-                //$session->set('activeleague',$myLeaguesObj[0]->getLeague()->getId());
-                //$activeleague = $session->get("activeleague");
-                //$activeLeagueObj = $myLeaguesObj[0]->getLeague();
-            }
-        } else {
-            foreach ($myLeaguesObj as $userLeague) {
-                if ($userLeague->getLeague()->getId() == $LeagueManager->getActiveLeague()->getId()) {
-                    //$activeLeagueObj = $userLeague->getLeague();
-                    dump($userLeague);
-                    break;
-                }
             }
         }
-        //dump($activeLeagueObj);
 
         /* --- invited leagues --- */
         $invitedLeagues = $em->getRepository('AppBundle:InviteUser')->findAllInvitedLeagues($user->getEmail());
-        //dump($invitedLeagues);
         $LeagueInvite = new LeagueInviteController();
         $LeagueInvite->inviteSalt = $this->getParameter('inviteleaguesalt');
 
@@ -118,7 +98,7 @@ dump($LeagueManager->getActiveLeague());
             $session->set('activeleague',$league_id);
         }
 
-        return $this->redirectToRoute('app.rva.selectteam');
+        return $this->redirectToRoute('app.rva.mylineup');
 
     }
 
