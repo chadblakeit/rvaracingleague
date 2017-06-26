@@ -308,7 +308,7 @@ dump($test);
             }
         }
 
-
+// clinics
         return new JsonResponse($array);
     }
 

@@ -88,7 +88,7 @@ class RaceController extends Controller
 
         $LeagueManager = $this->get('app.league_manager');
         if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
-            //return $this->redirectToRoute("app.rva.home"); // do a return jsonresponse error to redirect
+            //return $this->redirectToRoute("app.rva.home"); // TODO: do a return jsonresponse error to redirect
         }
 
         $raceSubmissions = new RaceSubmissions();
