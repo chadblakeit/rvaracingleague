@@ -3,10 +3,10 @@
     {% block styles %}
         <style>
             .drivers-container {
-                max-height: 442px; overflow: auto; border:1px solid #bec7d6;border-radius:4px;
+                max-height: 442px; overflow: auto; border:1px solid #bec7d6; clear: both;
             }
             .driver-container {
-                width:100%;padding:8px 0 6px 0;background:#f2f2f2;margin-bottom:1px;font-size:20px;min-height:47px;
+                width:100%;font-size:20px;
             }
             .driver-container:hover {
                 background: #8795a3; cursor: pointer;
@@ -18,10 +18,10 @@
                 color: #ffffff;
             }
             .driver-number {
-                width:40px;padding:5px 0 5px 0;background:#ffffff;border-radius:5px;text-align:center;font-weight:bold;display:inline-block;margin:0 3px 0 7px;
+                width:36px;padding:5px 0 5px 0;background:#f2f2f2;border-radius:5px;text-align:center;font-weight:bold;display:inline-block;margin-right:5px;line-height:20px;display:inline-block; margin-left: 10px;
             }
             .driver-name {
-                width: auto; padding:5px 0 5px 0;display:inline-block;
+                display:inline-block;
             }
             .drivers-selection-container {
                 clear: both;
@@ -30,7 +30,7 @@
                 margin-bottom: 20px;
             }
             .lineup-header {
-                border-top: 2px solid #000; border-bottom: 1px solid #ccc; padding: 10px 0 10px 0; background: #f2f2f2; padding-left: 10px;
+                border-top: 2px solid #000; border-bottom: 1px solid #ccc; padding: 10px 0 10px 0px; background: #f2f2f2;
             }
             .driver-selection {
                 width:50%;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;min-height:47px;position:relative;display:inline-block;float:left;
@@ -113,6 +113,18 @@
             .race-name-info .race-info { display: inline-block; width: 75%; margin-left: 30px; }
             .race-name-info .race-date { display: inline-block; width: 115px; margin-left: 30px; float: right; vertical-align: top; }
 
+            .drivers-list { float: left; width: 100%; padding-top: 0; padding-bottom: 0;  }
+            .name-col, .stats-col, .stats-col div, .league-col, .league-col div { display: inline-block; vertical-align: top; float: left; height: 40px; line-height: 40px; }
+            .name-col { width: calc(100% / 12 * 5);  line-height: 40px; }
+            .stats-col { width: calc(100% / 12 * 4.5); }
+            .league-col { width: calc(100% / 12 * 2.5); float: right; }
+            .stats-col div, .league-col div { text-align: center; border-left: 1px solid #ccc; }
+            .stats-col div { width: calc(100% / 12 * 3); }
+            .league-col div { width: calc(100% / 12 * 6); }
+            .drivers-list-wrapper { clear: both; float: left; width: 100%; border-bottom: 1px solid #ccc; }
+            .drivers-list-wrapper .name-col, .drivers-list-wrapper .stats-col div, .drivers-list-wrapper .league-col div { height: 50px; line-height: 50px; }
+            .lineup-header .stats-col, .lineup-header .league-col { font-size: 12px; }
+
             @media (max-width: 660px) {
                 .mobile-dimension-11 {
                     width: calc(100% / 12 * 11);
@@ -160,13 +172,6 @@
                         <div class="lineup-container">
                             <div class="lineup-header">
                                 My Lineup
-                                <!--<h3 class="{{ driver_class }}">
-                                    {% if mydrivers %}
-                                        Lineup Submitted
-                                    {% else %}
-                                        Select Your Lineup
-                                    {% endif %}
-                                </h3>-->
                                 {% if mydrivers and race_locked == false %}<i class="fa fa-pencil-square-o edit-drivers" aria-hidden="true"></i>{% elseif race_locked == true %}<i class="fa fa-lock" aria-hidden="true"></i>{% endif %}
                             </div>
                             <div class="driver-selection {{ lineup_status }}">
@@ -220,15 +225,35 @@
                             <div class="team-submission disabled">Submit Lineup</div>
                         </div>
 
-                        <div style="width:100%;float:left;">
-                            <div class="drivers-container">
-                                {% for driver in drivers %}
+                        <div class="lineup-container">
 
-                                    <div class="driver-container" id="driver{{ driver.id }}">
-                                        <div class="driver-number">{{ driver.number }}</div>
-                                        <div class="driver-name">{{ driver.firstname }}&nbsp;{{ driver.lastname }}</div>
-                                        <input type="hidden" name="driverid" value="{{ driver.id }}" />
+                            <div class="drivers-container">
+                                <div class="drivers-list lineup-header">
+                                    <div class="name-col">Drivers</div>
+                                    <div class="stats-col">
+                                        <div class="top10s">Top 10s</div><div class="top5s">Top 5s</div><div class="avg">Avg</div><div class="wins">Wins</div>
                                     </div>
+                                    <div class="league-col">
+                                        <div class="picks">Picks</div><div class="points">Points</div>
+                                    </div>
+                                </div>
+                                {% for rid, points in driverpoints %}
+
+                                    {% if drivers[rid].inactive == 0 %}
+                                    <div class="drivers-list-wrapper">
+                                        <div class="driver-container name-col" id="driver{{ rid }}">
+                                            <div class="driver-number">{{ drivers[rid].number }}</div>
+                                            <div class="driver-name">{{ drivers[rid].firstname }}&nbsp;{{ drivers[rid].lastname }}</div>
+                                            <input type="hidden" name="driverid" value="{{ rid }}" />
+                                        </div>
+                                        <div class="stats-col">
+                                            <div class="top10s">{{ drivertoptens[rid] }}</div><div class="top5s">{{ drivertopfives[rid] }}</div><div class="avg">0</div><div class="wins">{{ driverwins[rid] }}</div>
+                                        </div>
+                                        <div class="league-col">
+                                            <div class="picks">0</div><div class="points">{{ points }}</div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
 
                                 {% endfor %}
                             </div>

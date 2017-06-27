@@ -35,11 +35,14 @@ class RaceController extends Controller
             return $this->redirectToRoute("app.rva.home");
         }
 
+        $DriversManager = $this->get('app.drivers_manager');
+        $driversArr = $DriversManager->getDriverStats();
+
         $em = $this->getDoctrine()->getManager();
         $driversRepo = $em->getRepository('AppBundle:Drivers');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
 
-        $driversObj = $driversRepo->findBy(['inactive' => 0]);
+        //$driversObj = $driversRepo->findBy(['inactive' => 0]);
 
         $raceSubmission = $raceSubmissionsRepo->findOneBy([
             'fos_user' => $user,
@@ -57,22 +60,25 @@ class RaceController extends Controller
             $driver_class = "unsubmitted";
         }
 
+        //dump($myDrivers);
+
         $adminRepo = $em->getRepository('AppBundle:Admin');
         $adminResults = $adminRepo->findOneBy(['id' => 1]);
         $racelocked = ($adminResults->getLocked()) ? true : false;
-        //$racelocked = false;
-
-        dump($LeagueManager->getActiveRace());
 
         return $this->render(':race:mylineup.html.twig', array(
-            'drivers' => $driversObj,
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
             'racesubmission' => $raceSubmission,
             'mydrivers' => $myDrivers,
             'lineup_status' => $lineup_status,
             'driver_class' => $driver_class,
-            'race_locked' => $racelocked
+            'race_locked' => $racelocked,
+            'driverpoints' => $DriversManager->getDriverPoints(),
+            'driverwins' => $DriversManager->getDriverWins(),
+            'drivertopfives' => $DriversManager->getDriverTopFives(),
+            'drivertoptens' => $DriversManager->getDriverTopTens(),
+            'drivers' => $driversArr
         ));
     }
 
