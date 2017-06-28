@@ -43,7 +43,7 @@ html, body {
 /* header */
 
 .header-container {
-    background: #b8c7d8;
+    background: #99aabb;
     height: 60px;
 }
 
@@ -378,3 +378,10 @@ button[type=submit]:hover {
 .race-results-driver div {
     display: inline-block;
 }
+
+
+/* message block - active race info */
+.race-name-info { padding-top: 15px; }
+.race-name-info .race-name { display: inline-block; width: 75%; font-size: 22px; font-weight: 700; }
+.race-name-info .race-info { display: inline-block; width: 75%; margin-left: 30px; }
+.race-name-info .race-date { display: inline-block; width: 115px; margin-left: 30px; float: right; vertical-align: top; }

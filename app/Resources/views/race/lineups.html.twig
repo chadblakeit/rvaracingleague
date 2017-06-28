@@ -21,12 +21,6 @@
                 margin-right: 10px;
                 margin-left: 2px;
             }
-            .drivers-header-information .league {
-                width: auto;
-                display: inline-block;
-                text-align: right;
-                float: right;
-            }
             .drivers-header-information .header-link {
                 width: auto;
                 display: inline-block;
@@ -80,6 +74,7 @@
                 display: inline-block;
                 width: auto;
             }
+
             @media (max-width: 600px) {
                 .lineup-container {
                     width: 100%;
@@ -91,6 +86,22 @@
         </style>
     {% endblock %}
 
+    {% block message %}
+        <div class="race-name-info dimension-10 mobile-dimension-11">
+            <div class="race-date">
+                {{ activerace.racedate.date }}
+            </div>
+            <div class="race-name">
+                <i class="fa fa-tachometer" aria-hidden="true"></i>
+                {{ activerace.racename }}
+            </div>
+            <div class="race-info">
+                {{ activerace.trackname }} in {{ activerace.location }}<br />
+                Track Length: {{ activerace.tracklength }}
+            </div>
+        </div>
+    {% endblock %}
+
     {% block content %}
 
         <div class="content-container dimension-10 mobile-dimension-11">
@@ -98,12 +109,7 @@
             <div class="dashboard-container">
 
                 <div class="drivers-header-information">
-                    <div class="racename">
-                        <i class="fa fa-tachometer" aria-hidden="true"></i>{{ race.racename }} :: <span style="font-size:18px">{{ race.location }}</span>
-                    </div>
-                    <div class="league">
-                        {{ activeleague.name }}
-                    </div>
+                    <div>{{ activeleague.name }}</div>
                 </div>
                 <div style="padding-bottom:40px;">
                     {% if submissions|length > 0 %}

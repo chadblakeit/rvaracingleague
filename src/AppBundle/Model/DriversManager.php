@@ -74,7 +74,8 @@ class DriversManager
                 'firstname' => $driver->getFirstname(),
                 'lastname' => $driver->getLastname(),
                 'number' => $driver->getNumber(),
-                'inactive' => $driver->getInactive()
+                'inactive' => $driver->getInactive(),
+                'carmake' => $driver->getCarmake()
             ];
         }
 

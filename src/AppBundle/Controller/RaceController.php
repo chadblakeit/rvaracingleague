@@ -41,9 +41,6 @@ class RaceController extends Controller
         $em = $this->getDoctrine()->getManager();
         $driversRepo = $em->getRepository('AppBundle:Drivers');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
-
-        //$driversObj = $driversRepo->findBy(['inactive' => 0]);
-
         $raceSubmission = $raceSubmissionsRepo->findOneBy([
             'fos_user' => $user,
             'league' => $LeagueManager->getActiveLeague(),
@@ -51,17 +48,9 @@ class RaceController extends Controller
         ]);
 
         $lineup_status = (isset($raceSubmission) && !empty($raceSubmission)) ? 'closed' : 'open';
+        $myDrivers = (!empty($raceSubmission)) ? $driversRepo->findAllDriversSubmitted($raceSubmission->getDrivers()) : [];
 
-        $myDrivers = [];
-        if (!empty($raceSubmission)) {
-            $myDrivers = $driversRepo->findAllDriversSubmitted($raceSubmission->getDrivers());
-            $driver_class = "submitted";
-        } else {
-            $driver_class = "unsubmitted";
-        }
-
-        //dump($myDrivers);
-
+        // check if the race is locked
         $adminRepo = $em->getRepository('AppBundle:Admin');
         $adminResults = $adminRepo->findOneBy(['id' => 1]);
         $racelocked = ($adminResults->getLocked()) ? true : false;
@@ -72,7 +61,6 @@ class RaceController extends Controller
             'racesubmission' => $raceSubmission,
             'mydrivers' => $myDrivers,
             'lineup_status' => $lineup_status,
-            'driver_class' => $driver_class,
             'race_locked' => $racelocked,
             'driverpoints' => $DriversManager->getDriverPoints(),
             'driverwins' => $DriversManager->getDriverWins(),
