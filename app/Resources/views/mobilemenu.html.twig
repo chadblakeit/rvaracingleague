@@ -1,0 +1,11 @@
+<div class="mobile-menu">
+    <i class="fa fa-bars" aria-hidden="true"></i>
+    <ul class="mobile-menu-dropdown">
+        <li><a href="{{ path("app.rva.home") }}">Home</a></li>
+        <li><a href="{{ path("app.rva.raceschedule") }}">Schedule</a></li>
+        <li><a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">League Lineups</a></li>
+        <li><a href="{{ path("app.rva.mylineup") }}">My Lineup</a></li>
+        <li><a href="{{ path("app.rva.leaguestandings") }}">Standings</a></li>
+        <li><a href="{{ path("app.rva.driversinfo") }}">Stats</a></li>
+    </ul>
+</div>

@@ -1,9 +1,16 @@
 $(document).ready(function(){
-    $(".header-user .user").on("click", function(e){
+    $(".header-user .user, .header-user .avatar").on("click", function(e){
         if ($(".user-dropdown").is(":visible")) {
             $(".user-dropdown").hide();
         } else {
             $(".user-dropdown").show();
+        }
+    });
+    $(".mobile-menu .fa-bars").on("click", function(){
+        if ($(".mobile-menu-dropdown").is(":visible")) {
+            $(".mobile-menu-dropdown").hide();
+        } else {
+            $(".mobile-menu-dropdown").show();
         }
     });
     $(".header-user .user-dropdown").on("click", function(e) {

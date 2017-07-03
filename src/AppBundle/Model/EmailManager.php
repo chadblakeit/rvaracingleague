@@ -37,7 +37,7 @@ class EmailManager
         foreach ($unsubmittedUsers as $userArr) {
             $name = $userArr['firstname'] . " " . $userArr['lastname'];
             if (trim($name) == "") { $name = $userArr['username']; }
-            $this->sendEmail("Submit Lineup Reminder","tblake521@gmail.com","emails/lineupreminder.html.twig",['name'=>$name,'league'=>$league->getName(),'race'=>$race->getRacename()]);
+            $this->sendEmail("Submit Lineup Reminder","cantinaband24@gmail.com","emails/lineupreminder.html.twig",['name'=>$name,'league'=>$league->getName(),'race'=>$race->getRacename()]);
         }
     }
 

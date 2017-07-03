@@ -1,165 +1,16 @@
 {% embed '::layout.html.twig' %}
 
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" href="{{ asset('css/lineup.css') }}" />
+    {% endblock %}
+
     {% block styles %}
-        <style>
-            .drivers-container {
-                max-height: 442px; overflow: auto; border:1px solid #bec7d6; clear: both; border-top: 2px solid #000;
-            }
-            .driver-container {
-                width:100%;font-size:20px;
-            }
-            .driver-container:hover {
-                background: #b2c2d3;/*#8795a3;*/ cursor: pointer;
-            }
-            .driver-container:active {
-                background: #99aabb;/*#697887;*/
-            }
-            .driver-container:hover .driver-name {
-                color: #ffffff;
-            }
-            .driver-container .fa-plus-square {
-                display: inline-block; font-size: 30px; color: green; margin-top: 4px;
-            }
-            .driver-container .carmake { display: table; float: right; margin-right: 6px; }
-            .driver-container .carmake img { width: 40px; }
-            .driver-number {
-                width:36px;padding:5px 0 5px 0;background:#f2f2f2;border-radius:4px;text-align:center;font-weight:bold;display:inline-block;margin-right:5px;line-height:20px;display:inline-block; margin-left: 10px;
-            }
-            .driver-name {
-                display:inline-block;
-            }
-            .drivers-selection-container {
-                clear: both;
-            }
-            .lineup-container {
-                margin-bottom: 20px; float: left; clear: both; width: 100%;
-            }
-            .lineup-header {
-                border-top: 2px solid #000; border-bottom: 1px solid #ccc; padding: 10px 0 10px 0px; background: #f2f2f2; position: relative;
-            }
-            .lineup-header p { padding-left: 10px; }
-            .mylineup .lineup-header {
-                margin-bottom: 2px;
-            }
-            .driver-selection {
-                width:50%;margin-bottom:1px;border-bottom:0px solid #fff;font-size:20px;height:47px;position:relative;display:inline-block;float:left;
-            }
-            .driver-selection .selection-container {
-                background:#f2f2f2; background: #f2f2f2; margin: 2px 0 2px 0; min-height: 47px; margin-right: 2px;
-            }
-            .selection-container.right { margin-left: 2px; margin-right: 0; }
-            .selection-container .driver-name { line-height: 47px; }
-            .selection-container .driver-number { background: #99aabb; color: #ffffff; margin-right: 10px; }
-            .remove-driver {
-                position:absolute;right:10px;top:10px;cursor:pointer;
-            }
-            .remove-driver .fa-window-close { font-size: 30px; color: red; }
-            .selected {
-                background: #99aabb/*#697887*/;
-            }
-            .selected .driver-name {
-                color: #ffffff;
-            }
-            .team-submission {
-                width:220px;background:#000;color:#fff;border-radius:4px;clear:right;padding:10px;text-align:center;font-size:20px;clear:both; float:right; margin-top: 10px;
-            }
-            .team-submission.disabled {
-                opacity: 0.25;
-            }
-            .team-submission.valid {
-                background: green; cursor: pointer;
-            }
-            .drivers-header-information {
-                margin-bottom: 20px;
-                border-bottom: 1px solid #cccccc;
-                padding-bottom: 10px;
-                font-size: 18px;
-                float: left;
-                width: 100%;
-            }
-            .drivers-header-information .racename {
-                width: auto;
-                display: inline-block;
-                font-weight: 700;
-                font-size: 24px;
-                float: left;
-            }
-            .drivers-header-information .racename i {
-                margin-right: 10px;
-                margin-left: 2px;
-            }
-            .drivers-header-information .league {
-                width: auto;
-                display: inline-block;
-                text-align: right;
-                float: right;
-            }
-            .drivers-header-information .header-link {
-                width: auto;
-                display: inline-block;
-                float: left;
-                vertical-align: bottom;
-                margin-left: 20px;
-                line-height: 27px;
-            }
-            .drivers-header-information .header-link.active {
-                border-bottom: 2px solid #b8c7d8;
-            }
-            .header-link a, .header-link a:active, .header-link a:visited {
-                text-decoration: none;
-            }
-            .edit-drivers, .fa-lock {
-                position: absolute;
-                right: 10px;
-                top: 8px;
-                font-size: 24px;
-                cursor: pointer;
-                color: #0d821e;
-            }
-            .fa-lock {
-                color: red;
-                cursor: default;
-            }
-
-            .race-name-info { padding-top: 15px; }
-            .race-name-info .race-name { display: inline-block; width: 75%; font-size: 22px; font-weight: 700; }
-            .race-name-info .race-info { display: inline-block; width: 75%; margin-left: 30px; }
-            .race-name-info .race-date { display: inline-block; width: 115px; margin-left: 30px; float: right; vertical-align: top; }
-
-            .drivers-list { float: left; width: 100%; padding-top: 0; padding-bottom: 0; border-top: 0; }
-            .name-col, .stats-col, .stats-col div, .league-col, .league-col div { display: inline-block; vertical-align: top; float: left; height: 40px; line-height: 40px; }
-            .name-col { width: calc(100% / 12 * 5);  line-height: 40px; }
-            .stats-col { width: calc(100% / 12 * 4.5); }
-            .league-col { width: calc(100% / 12 * 2.5); float: right; }
-            .stats-col div, .league-col div { text-align: center; border-left: 1px solid #ccc; }
-            .stats-col div { width: calc(100% / 12 * 3); }
-            .league-col div { width: calc(100% / 12 * 6); }
-            .drivers-list-wrapper { clear: both; float: left; width: 100%; border-bottom: 1px solid #ccc; }
-            .drivers-list-wrapper .name-col, .drivers-list-wrapper .stats-col div, .drivers-list-wrapper .league-col div { height: 50px; line-height: 50px; }
-            .lineup-header .stats-col, .lineup-header .league-col { font-size: 12px; }
-
-            @media (max-width: 660px) {
-                .mobile-dimension-11 {
-                    width: calc(100% / 12 * 11);
-                }
-                .driver-selection { width: 100%; margin-right: 0; margin-left: 0; }
-            }
-            @media (max-width: 585px) {
-                .drivers-container {
-                    width: 100%;
-                }
-                .submit-team-container {
-                    float: none; clear: left; width: 100%; margin-top: 20px;
-                }
-            }
-        </style>
+        <style></style>
     {% endblock %}
 
     {% block message %}
         <div class="race-name-info dimension-10 mobile-dimension-11">
-            <div class="race-date">
-                {{ activerace.racedate.date }}
-            </div>
             <div class="race-name">
                 <i class="fa fa-tachometer" aria-hidden="true"></i>
                 {{ activerace.racename }}
@@ -167,6 +18,9 @@
             <div class="race-info">
                 {{ activerace.trackname }} in {{ activerace.location }}<br />
                 Track Length: {{ activerace.tracklength }}
+            </div>
+            <div class="race-date">
+                {{ activerace.racedate.date | date("F d, Y") }}<span class="race-time">{{ activerace.racedate.date | date("g:ia") }}</span>
             </div>
         </div>
     {% endblock %}
@@ -257,6 +111,7 @@
                                                 <!--<i class="fa fa-plus-square" aria-hidden="true"></i>-->
                                                 <div class="driver-number">{{ drivers[rid].number }}</div>
                                                 <div class="driver-name">{{ drivers[rid].firstname }}&nbsp;{{ drivers[rid].lastname }}</div>
+                                                <div class="mobile-driver-info"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
                                                 {% if drivers[rid].carmake is defined and drivers[rid].carmake is not empty %}<div class="carmake"><img src="{{ asset('images/'~drivers[rid].carmake~'.png') }}" /></div>{% endif %}
                                                 <input type="hidden" name="driverid" value="{{ rid }}" />
                                             </div>

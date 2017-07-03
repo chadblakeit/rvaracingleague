@@ -6,19 +6,11 @@
             .active-league:hover { background: #6d8dbf; color: #ffffff;  }
             .active-league .fa-flag-checkered { margin-left: 5px; margin-right: 10px; color: #1a2d4c; }
             .create-league-container { margin-top: 10px; background: #f2f2f2; border-top: 1px solid #ccc; padding: 10px; }
-
-            .race-name-info { padding-top: 15px; }
-            .race-name-info .race-name { display: inline-block; width: 75%; font-size: 22px; font-weight: 700; }
-            .race-name-info .race-info { display: inline-block; width: 75%; margin-left: 30px; }
-            .race-name-info .race-date { display: inline-block; width: 115px; margin-left: 30px; float: right; vertical-align: top; }
         </style>
     {% endblock %}
 
     {% block message %}
         <div class="race-name-info dimension-10 mobile-dimension-11">
-            <div class="race-date">
-                {{ activerace.racedate.date }}
-            </div>
             <div class="race-name">
                 <i class="fa fa-tachometer" aria-hidden="true"></i>
                 {{ activerace.racename }}
@@ -26,6 +18,9 @@
             <div class="race-info">
                 {{ activerace.trackname }} in {{ activerace.location }}<br />
                 Track Length: {{ activerace.tracklength }}
+            </div>
+            <div class="race-date">
+                {{ activerace.racedate.date | date("F d, Y") }}<br class="race-time-break" />{{ activerace.racedate.date | date("g:ia") }}
             </div>
         </div>
     {% endblock %}

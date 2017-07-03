@@ -79,6 +79,7 @@ html, body {
     text-align: center;
     font-size: 34px;
     line-height: 41px;
+    cursor: pointer;
 }
 
 .header-user .user {
@@ -100,7 +101,6 @@ html, body {
 .user-dropdown {
     position: absolute;
     top: 41px;
-    left: 0;
     display: none;
     width: 100%;
     height: auto;
@@ -109,6 +109,9 @@ html, body {
     padding: 2px 0 2px 0;
     border-radius: 4px;
     cursor: default;
+    right: 0;
+    min-width: 100px;
+    z-index: 100;
 }
 
 .user-dropdown ul {
@@ -137,6 +140,13 @@ html, body {
 .main-menu ul li { display: inline-block; padding: 8px; margin-right: 10px; }
 .main-menu ul li i { margin-right: 5px; }
 .main-menu ul li a, .main-menu ul li a:visited { color: #ffffff; text-decoration: none; }
+
+.mobile-menu { display: none; margin-top: 5px; position: relative; }
+.mobile-menu ul { position: absolute; list-style-type: none; background: #ffffff; width: 140px; z-index: 100; border: 1px solid #cccccc; border-radius: 4px; }
+.mobile-menu ul li { padding: 5px; border: 1px solid #f2f2f2; font-size: 18px; line-height: 30px; }
+.mobile-menu ul li a, .mobile-menu ul li a:visited { text-decoration: none; }
+.mobile-menu .fa-bars { cursor: pointer; }
+.mobile-menu-dropdown { display: none; }
 
 .message-container {
     height: 100px;
@@ -381,7 +391,25 @@ button[type=submit]:hover {
 
 
 /* message block - active race info */
-.race-name-info { padding-top: 15px; }
-.race-name-info .race-name { display: inline-block; width: 75%; font-size: 22px; font-weight: 700; }
-.race-name-info .race-info { display: inline-block; width: 75%; margin-left: 30px; }
-.race-name-info .race-date { display: inline-block; width: 115px; margin-left: 30px; float: right; vertical-align: top; }
+.race-name-info { padding-top: 15px; position: relative; }
+.race-name-info .race-name { display: inline-block; font-size: 22px; font-weight: 700; float: left; clear: left; }
+.race-name-info .race-info { display: inline-block; margin-left: 30px; float: left; clear: left; }
+.race-name-info .race-date { position: absolute; right: 0; top: 20px; width: auto; text-align: right; }
+.race-name-info .race-date .race-time { display: block; }
+
+.mobile-driver-info { display: none; float: right; cursor: pointer; }
+
+@media (max-width: 880px) {
+    .header-user .user { display: none; }
+}
+
+@media (max-width: 675px) {
+    .main-menu { display: none; }
+    .mobile-menu { display: inline-block; }
+    .header-logo .fa-home { display: none; }
+    .message-container { padding-bottom: 15px; margin-bottom: 30px; float: left; height: auto; min-height: 100px; }
+    .race-name-info .race-date { position: relative; top: 0; clear: left; float: left; width: auto; margin-left: 30px; display: inline-block; }
+    .race-name-info .race-date .race-time { display: inline-block; padding-left: 8px; }
+}
+
+
