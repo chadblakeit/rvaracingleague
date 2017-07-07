@@ -20,7 +20,7 @@
                 Track Length: {{ activerace.tracklength }}
             </div>
             <div class="race-date">
-                {{ activerace.racedate.date | date("F d, Y") }}<br class="race-time-break" />{{ activerace.racedate.date | date("g:ia") }}
+                {{ activerace.racedate.date | date("F d, Y") }}<span class="race-time">{{ activerace.racedate.date | date("g:ia") }}</span>
             </div>
         </div>
     {% endblock %}

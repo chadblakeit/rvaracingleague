@@ -403,6 +403,15 @@ button[type=submit]:hover {
     .header-user .user { display: none; }
 }
 
+@media (max-width: 750px) {
+    .header-logo { width: 50px; }
+}
+
+@media (max-width: 710px) {
+    .header-logo { width: 40px; }
+    .main-menu ul li { margin-right: 0; }
+}
+
 @media (max-width: 675px) {
     .main-menu { display: none; }
     .mobile-menu { display: inline-block; }
