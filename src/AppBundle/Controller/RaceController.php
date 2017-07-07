@@ -148,7 +148,7 @@ class RaceController extends Controller
         $scheduleRepo = $em->getRepository('AppBundle:RaceSchedule');
         $scheduleObj = $scheduleRepo->findAll();
 
-        dump($scheduleObj);
+        //dump($scheduleObj);
         return $this->render(':race:schedule.html.twig', array(
             'schedule' => $scheduleObj,
             'activerace' => $LeagueManager->getActiveRace(),
@@ -238,7 +238,7 @@ class RaceController extends Controller
         foreach ($drivers as $driver) {
             $driversArr[$driver->getId()] = ['name' => $driver->getFirstname() . " " . $driver->getLastname(), 'number' => $driver->getNumber()];
         }
-        dump($driversArr);
+        //dump($driversArr);
 
         $raceResultStandings = RaceResultStandings::setResultStandings($raceResults,$raceSubmissions);
         $user_ids = array_keys($raceResultStandings['totalPoints']);
@@ -247,8 +247,8 @@ class RaceController extends Controller
         foreach ($fosUsers as $userObj) {
             $userNames[$userObj->getId()] = $userObj->getFirstname() . " " . $userObj->getLastname();
         }
-        dump($userNames);
-        dump($raceResultStandings);
+        //dump($userNames);
+        //dump($raceResultStandings);
 
         return $this->render(':race:results.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
@@ -304,8 +304,8 @@ class RaceController extends Controller
         foreach ($raceSubmissions as $key => $submission) {
             $raceSubmissions[$key]->setFosUser($fosUsers[$submission->getFosUser()->getId()]);
         }
-dump($raceSubmissions);
-dump($driversArr);
+//dump($raceSubmissions);
+//dump($driversArr);
 
 	$show_lineup = (count($raceSubmissions) > 0) ? true : false;
 

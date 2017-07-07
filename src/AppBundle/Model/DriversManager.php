@@ -22,7 +22,7 @@ class DriversManager
         $this->em = $em;
         $this->driversRepo = $this->em->getRepository('AppBundle:Drivers');
         $this->drivers = $this->driversRepo->findAll();
-        dump($this->drivers);
+        //dump($this->drivers);
 
     }
 
@@ -31,7 +31,7 @@ class DriversManager
         $resultsRepo = $this->em->getRepository('AppBundle:RaceResults');
         $allResults = $resultsRepo->findAll();
 
-        dump($allResults);
+        //dump($allResults);
 
         $driverPoints = [];
         $driverWins = [];
@@ -65,7 +65,7 @@ class DriversManager
         }
 
         asort($driverPoints);
-        dump($driverPoints);
+        //dump($driverPoints);
 
         $driversArr = [];
 

@@ -31,7 +31,7 @@ class AdminController extends Controller
         }
 
         $role = $user->getRoles();
-        dump($role);
+        //dump($role);
 
         if (is_null($race)) {
             // redirect back to schedule
@@ -57,8 +57,8 @@ class AdminController extends Controller
 
         $raceObj = $scheduleRepo->findOneBy(['id' => $race]);
         $raceResults = $raceResultsRepo->findOneBy(['race' => $raceObj]);
-dump($raceResults);
-dump($driverInfo);
+//dump($raceResults);
+//dump($driverInfo);
 
 
 
@@ -121,7 +121,6 @@ dump($driverInfo);
 
                 $drivers = $driversRepo->findAll();
                 $driverArr = [];
-                dump($drivers);
                 foreach ($drivers as $driver) {
                     $driverArr[$driver->getId()] = $driver;
                 }

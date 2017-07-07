@@ -32,15 +32,15 @@ class HomeController extends Controller
         $LeagueManager = $this->get('app.league_manager');
         $LeagueManager->initiateActiveRace();
 
-dump($LeagueManager->getActiveRace());
-dump($LeagueManager->getActiveLeague());
+//dump($LeagueManager->getActiveRace());
+//dump($LeagueManager->getActiveLeague());
 
         $em = $this->getDoctrine()->getManager();
         $leagueRepo = $em->getRepository('AppBundle:UserLeagues');
 
         // TODO: make sure you select leagues that aren't disabled
         $myLeaguesObj = $leagueRepo->findAllMyActiveLeagues($user);
-        dump($myLeaguesObj);
+        //dump($myLeaguesObj);
 
         // select first league by default
         if (is_null($LeagueManager->getActiveLeague())) {
