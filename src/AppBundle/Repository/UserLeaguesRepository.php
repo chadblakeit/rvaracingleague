@@ -91,4 +91,5 @@ class UserLeaguesRepository extends EntityRepository
             return null;
         }
     }
+
 }

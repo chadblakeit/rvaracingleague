@@ -5,6 +5,7 @@ namespace AppBundle\Model;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Entity\InviteUser;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EmailManager
 {
@@ -74,6 +75,11 @@ class EmailManager
 
     public function setInviteRepo() {
         $this->inviteUserRepo = $this->em->getRepository('AppBundle:InviteUser');
+    }
+
+    public function resendLeagueActivation($activatesalt,$league,$user) {
+        $salt = md5($activatesalt . $user->getId() . $league->getName() . $league->getId());
+        $url = "http://rva.dev/league/activate?u=".base64_encode($user->getId())."&ac=".$salt."&l=".$league->getId();
     }
 
     public function testEM() {

@@ -183,9 +183,15 @@ class LeagueManager
             }
         }
 
-        dump($hasSubmission);
+        //dump($hasSubmission);
 
         return ['members' => $fosUsers, 'submissions' => $hasSubmission];
+    }
+
+    public function getInactiveLeagues($fos_user)
+    {
+        $leaguesRepo = $this->em->getRepository('AppBundle:League');
+        return $leaguesRepo->findBy(['disabled' => 0, 'active' => 0, 'fos_user' => $fos_user]);
     }
 
     public function lineupReminder()
@@ -207,5 +213,7 @@ class LeagueManager
         //dump($this->getActiveRace());
         return $unsubmittedUsers;
     }
+
+
 
 }

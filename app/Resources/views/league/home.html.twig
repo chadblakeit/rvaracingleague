@@ -49,6 +49,18 @@
                                     <span style="font-style:italic;">No Active Leagues</span>
                                 {% endif %}
 
+                                {% if inactiveleagues is defined and inactiveleagues|length > 0 %}
+                                    <div class="inactive-league-container">
+                                        <h2>Inactive Leagues</h2>
+                                        {% for league in inactiveleagues %}
+                                            <div class="league-selection-container">
+                                                {{ league.name }}
+                                                <a class="resend-activation-link" href="#">Resend Activation</a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
                                 {% if invitedleagues is defined and invitedleagues|length > 0 %}
                                     <div class="invite-league-container">
                                         <h2>League Invites</h2>
