@@ -72,7 +72,7 @@ class LeagueFormController extends Controller
                     'text/html'
                 );
             $test = $this->get('mailer')->send($message);
-dump($test);
+
             return $this->render(':league:league.html.twig', array(
                 'register' => true,
                 'email' => $user->getEmail(),

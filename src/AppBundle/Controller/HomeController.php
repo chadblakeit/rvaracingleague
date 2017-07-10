@@ -37,7 +37,7 @@ class HomeController extends Controller
 
         // TODO: make sure you select leagues that aren't disabled
         $myLeaguesObj = $leagueRepo->findAllMyActiveLeagues($user);
-        dump($myLeaguesObj);
+        //dump($myLeaguesObj);
 
         // select first league by default
         if (is_null($LeagueManager->getActiveLeague())) {
@@ -54,7 +54,7 @@ class HomeController extends Controller
         $lastRaceResults = $LeagueManager->getLastRaceResults();
 
         $invite = ($LeagueManager->getActiveLeague()->getFosUser()->getId() == $user->getId()) ? true : false;
-dump($invite);
+
         return $this->render(':league:home.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'lastrace' => $lastRaceResults['lastRace'],

@@ -37,10 +37,10 @@ class LeagueController extends Controller
 
         $totalStandings = $LeagueManager->getTotalStandings();
 
-        dump($totalStandings);
+       // dump($totalStandings);
 
         $test = "leagueController";
-        dump($test);
+        //dump($test);
 
         return $this->render(':league:standings.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),

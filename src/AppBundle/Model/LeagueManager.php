@@ -96,7 +96,7 @@ class LeagueManager
             $lastRacePoints = [];
         }
 
-        dump($userWinner);
+        //dump($userWinner);
 
         return array('lastRace' => $lastRace, 'lastRaceWinner' => $userWinner, 'lastRacePoints' => $lastRacePoints);
     }
@@ -202,9 +202,9 @@ class LeagueManager
         }
 
         $unsubmittedUsers = $userLeaguesRepo->getUsersIDsNotInArray($uids,$this->getActiveLeague());
-        dump($unsubmittedUsers);
-        dump($this->getActiveLeague());
-        dump($this->getActiveRace());
+        //dump($unsubmittedUsers);
+        //dump($this->getActiveLeague());
+        //dump($this->getActiveRace());
         return $unsubmittedUsers;
     }
 
