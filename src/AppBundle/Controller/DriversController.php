@@ -46,6 +46,8 @@ class DriversController extends Controller
             'driverwins' => $DriversManager->getDriverWins(),
             'drivertopfives' => $DriversManager->getDriverTopFives(),
             'drivertoptens' => $DriversManager->getDriverTopTens(),
+            'driveravg' => $DriversManager->getDriverAvg(),
+            'driverraces' => $DriversManager->getDriverRaces(),
             'drivers' => $drivers
         ));
     }

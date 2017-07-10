@@ -1,10 +1,11 @@
 {% embed '::layout.html.twig' %}
 
     {% block mainmenu %}{% endblock %}
+    {% block mobilemenu %}{% endblock %}
 
     {% block content %}
 
-        <div class="content-container container-6">
+        <div class="content-container-auto container-6">
 
             <div style="padding:20px;">
                 <h3 class="form-title">Invite Team Member</h3>
@@ -12,13 +13,29 @@
                 <strong>League:</strong> {{ league.name }}<br /><br />
 
                 {% if invited is defined and invited is not empty %}
-                    <h4>{{ invited }} has been sent an invitation.</h4><br />
+                    <div>
+                        Invitations sent to:
+                        {% for invite in invited %}
+                            <h4>{{ invite }}</h4>
+                        {% endfor %}
+                    </div><br />
                 {% endif %}
+
+                {% if already_invited is defined and already_invited is not empty %}
+                    <div>
+                        Already invited:
+                        {% for alinvite in already_invited %}
+                            <h4>{{ alinvite }}</h4>
+                        {% endfor %}
+                    </div><br />
+                {% endif %}
+
+                <p>Enter one or more email address separated by a comma.</p><br />
 
                 {{ form_start(form) }}
                 {{ form_label(form.email) }}
                 {{ form_errors(form.email) }}
-                {{ form_widget(form.email) }}
+                {{ form_widget(form.email, {'value' : ''}) }}
                 {{ form_end(form) }}
             </div>
 

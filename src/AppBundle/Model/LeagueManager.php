@@ -169,6 +169,25 @@ class LeagueManager
         return ['fosUsers' => $fosUsers, 'totalPoints' => $totalPointsArr, 'raceWinners' => $statsRaceWinners];
     }
 
+    public function getLeagueMembers()
+    {
+        $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $fosUsers = $userLeaguesRepo->getUserInfoByLeague($this->getActiveLeague());
+        dump($fosUsers);
+
+        $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $this->getActiveRace(), 'league' => $this->getActiveLeague()]);
+        if (!empty($raceSubmissions) && !is_null($raceSubmissions)) {
+            foreach ($raceSubmissions as $submission) {
+                $hasSubmission[$submission->getFosUser()->getId()] = 1;
+            }
+        }
+
+        dump($hasSubmission);
+
+        return ['members' => $fosUsers, 'submissions' => $hasSubmission];
+    }
+
     public function lineupReminder()
     {
         $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');

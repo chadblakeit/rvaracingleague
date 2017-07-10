@@ -32,9 +32,6 @@ class HomeController extends Controller
         $LeagueManager = $this->get('app.league_manager');
         $LeagueManager->initiateActiveRace();
 
-dump($LeagueManager->getActiveRace());
-dump($LeagueManager->getActiveLeague());
-
         $em = $this->getDoctrine()->getManager();
         $leagueRepo = $em->getRepository('AppBundle:UserLeagues');
 
@@ -56,6 +53,8 @@ dump($LeagueManager->getActiveLeague());
 
         $lastRaceResults = $LeagueManager->getLastRaceResults();
 
+        $invite = ($LeagueManager->getActiveLeague()->getFosUser()->getId() == $user->getId()) ? true : false;
+dump($invite);
         return $this->render(':league:home.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'lastrace' => $lastRaceResults['lastRace'],
@@ -64,7 +63,8 @@ dump($LeagueManager->getActiveLeague());
             'myleagues' => $myLeaguesObj,
             'activeleague' => $LeagueManager->getActiveLeague(),
             'invitedleagues' => $invitedLeagues,
-            'LeagueInvite' => $LeagueInvite
+            'LeagueInvite' => $LeagueInvite,
+            'invite' => $invite
         ));
     }
 

@@ -1,9 +1,10 @@
 {% embed '::layout.html.twig' %}
 {% block mainmenu %}{% endblock %}
+{% block mobilemenu %}{% endblock %}
 
     {% block content %}
 
-        <div class="content-container container-6">
+        <div class="content-container-auto container-6">
 
             <div style="padding:20px;">
                 {% if register is defined %}

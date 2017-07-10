@@ -37,11 +37,13 @@
                             <div style="width:70px;float:right;margin-left:2px;padding:5px;text-align:center;">Wins</div>
                             <div style="width:70px;float:right;margin-left:2px;padding:5px;text-align:center;">Top 5s</div>
                             <div style="width:70px;float:right;padding:5px;text-align:center;">Top 10s</div>
+                            <div style="width:70px;float:right;padding:5px;text-align:center;">Avg</div>
+                            <div style="width:70px;float:right;padding:5px;text-align:center;">Races</div>
                         </div>
                         <div class="driver-stats-container">
                             <ul class="driver-points">
                             {% for rid, points in driverpoints %}
-                                <li><div class="place">{{ loop.index }}</div><div class="stats points">{{ points }}</div><div class="stats">{{ driverwins[rid] }}</div><div class="stats">{{ drivertopfives[rid] }}</div><div class="stats">{{ drivertoptens[rid] }}</div><div class="info"><div style="width:40px;text-align:center;display:inline-block;">{{ drivers[rid].number }}</div><div style="display:inline-block;">{{ drivers[rid].firstname }} {{ drivers[rid].lastname }}</div></div></li>
+                                <li><div class="place">{{ loop.index }}</div><div class="stats points">{{ points }}</div><div class="stats">{{ driverwins[rid] }}</div><div class="stats">{{ drivertopfives[rid] }}</div><div class="stats">{{ drivertoptens[rid] }}</div><div class="stats">{{ driveravg[rid] }}</div><div class="stats">{{ driverraces[rid] }}</div><div class="info"><div style="width:40px;text-align:center;display:inline-block;">{{ drivers[rid].number }}</div><div style="display:inline-block;">{{ drivers[rid].firstname }} {{ drivers[rid].lastname }}</div></div></li>
                             {% endfor %}
                             </ul>
                         </div>

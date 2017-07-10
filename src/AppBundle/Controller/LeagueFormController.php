@@ -32,6 +32,10 @@ class LeagueFormController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
+
+        // TODO: prevent double submission - reloading a submission currently adds a new league with the same name
+
+
         $league = new League();
         $form = $this->createFormBuilder($league)
             ->add('name', TextType::class)
@@ -54,7 +58,7 @@ class LeagueFormController extends Controller
             $em->flush();
 
             $salt = md5($this->getParameter('activatesalt') . $user->getId() . $league->getName() . $league->getId());
-            $url = "http://rva.dev/league/activate?u=".base64_encode($user->getId())."&ac=".$salt;
+            $url = "http://rva.dev/league/activate?u=".base64_encode($user->getId())."&ac=".$salt."&l=".$league->getId();
 
             $message = \Swift_Message::newInstance()
                 ->setSubject('Activation Link for rvaracingleague.com')
@@ -89,6 +93,7 @@ dump($test);
     {
         $activate_code = $request->query->get('ac');
         $codeduser = $request->query->get('u');
+        $league_id = $request->query->get('l');
         $decodeduser = base64_decode($codeduser);
 
         if (!is_null($activate_code) && !empty($activate_code)) {
@@ -100,7 +105,8 @@ dump($test);
             $leagueUser = $userRepo->findOneBy(['id'=>$decodeduser]);
             $leagueObj = $leagueRepo->findOneBy([
                 'fos_user' => $leagueUser,
-                'active' => 0
+                'active' => 0,
+                'id' => $league_id
             ]);
 
             if (!empty($leagueObj) && !is_null($leagueObj)) {
@@ -155,7 +161,16 @@ dump($test);
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague())) {
+            // redirect to home to select a league
+            // TODO: show flash message
+            return $this->redirectToRoute("app.rva.home");
+        }
+
+        $EmailManager = $this->get('app.email_manager');
+        $EmailManager->setInviteRepo();
+
         $user = array();
         $form = $this->createFormBuilder($user)
             ->add('email', TextType::class)
@@ -163,57 +178,43 @@ dump($test);
             ->getForm();
 
         $form->handleRequest($request);
-        $invited = "";
-
-        if (is_null($session->get('activeleague'))) {
-            // redirect to home to select a league
-            // TODO: show flash message
-            return $this->redirectToRoute("app.rva.home");
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $leagueRepo = $em->getRepository('AppBundle:League');
-        $league = $leagueRepo->findOneBy([
-            'id' => $session->get('activeleague')
-        ]);
+        $invited = [];
+        $already_invited = [];
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($league);
 
             $data = $form->getData();
-            $inviteUser = new InviteUser();
-            $inviteUser->setEmail($data['email']);
-            $inviteUser->setLeague($league);
-            $inviteUser->setAccepted(0);
-            $em->persist($inviteUser);
-            $em->flush();
 
-            $message = \Swift_Message::newInstance()
-                ->setSubject('You\'ve been invited to join '.$league->getName().' of the richmond racing league')
-                ->setFrom('web@rvaracingleague.com/')
-                ->setTo($data['email'])
-                ->setBody(
-                    $this->renderView(
-                        'league/inviteemail.html.twig',
-                        array(
-                            'name' => 'Invited User',
-                            'league_name' => $league->getName(),
-                            'leauge_email' => $league->getFosUser()->getEmail(),
-                            'invite_email' => $data['email'],
-                            'register_url' => 'http://rva.dev/register'
-                        )
-                    ),
-                    'text/html'
-                );
-            $test = $this->get('mailer')->send($message);
-            $invited = $data['email'];
+            if (strstr($data['email'],",")) {
+                $emails = explode(",",$data['email']);
+                dump($emails);
+                for ($e=0; $e<count($emails); $e++) {
+                    if (!empty(trim($emails[$e]))) {
+                        // TODO: check for valid email
+                        $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($emails[$e]));
+                        if ($sent) {
+                            $invited[] = trim($emails[$e]);
+                        } else {
+                            $already_invited[] = trim($emails[$e]);
+                        }
+                    }
+                }
+            } else {
+                $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($data['email']));
+                if ($sent) {
+                    $invited[] = trim($data['email']);
+                } else {
+                    $already_invited[] = trim($data['email']);
+                }
+            }
         }
 
         return $this->render(':league:invite.html.twig', array(
             'form' => $form->createView(),
-            'raceleagueid' => $session->get('activeleague'),
+            'raceleagueid' => $LeagueManager->getActiveLeague()->getId(),
             'invited' => $invited,
-            'league' => $league
+            'already_invited' => $already_invited,
+            'league' => $LeagueManager->getActiveLeague()
         ));
     }
 
@@ -308,7 +309,7 @@ dump($test);
             }
         }
 
-// clinics
+
         return new JsonResponse($array);
     }
 

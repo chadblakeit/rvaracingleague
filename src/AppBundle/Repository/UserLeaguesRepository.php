@@ -75,4 +75,20 @@ class UserLeaguesRepository extends EntityRepository
             return null;
         }
     }
+
+    public function getUserInfoByLeague($league) {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT u.id, u.firstname, u.lastname, u.username, u.email
+                 FROM AppBundle:UserLeagues ul
+                 JOIN AppBundle:User u
+                 WHERE u = ul.fos_user
+                 WHERE ul.league = :league'
+            )->setParameter('league', $league);
+        try {
+            return $query->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

@@ -1,0 +1,51 @@
+{% embed '::layout.html.twig' %}
+
+    {% block styles %}
+        <style>
+            .members-container { padding-bottom: 40px; clear: left; border-top: 2px solid #000; }
+            .members-container .fa-check-circle { color: green; }
+            .members-container .fa-times-circle { color: red; }
+            .members-container .member { width: 100%; padding: 8px; border-left: 1px solid #cccccc; border-right: 1px solid #cccccc; border-bottom: 1px solid #cccccc; }
+            .members-container .member div { display: inline-block; }
+            .members-container .member-submission { float: right; margin-right: 4px; }
+            .members-container .lineup-header { border-left: 1px solid #cccccc; border-right: 1px solid #cccccc; padding: 10px 0 10px 0; background: #f2f2f2; border-bottom: 1px solid #aaaaaa; }
+            .members-container .lineup-header p { padding-left: 8px; }
+            .members-container .lineup-header span { float: right; padding-right: 5px; display: inline-block; }
+        </style>
+    {% endblock %}
+
+    {% block message %}
+        {% embed ':race:trackmessage.html.twig' %}{% endembed %}
+    {% endblock %}
+
+    {% block content %}
+
+        <div class="content-container dimension-10 mobile-dimension-11">
+            <div class="dashboard-container">
+                <div class="drivers-header-information">
+                    <div>{{ activeleague.name }}</div>
+                </div>
+                <div  class="members-container">
+                    <div class="lineup-header"><p>Members<span>Lineup Submitted</span></p></div>
+                    {% if data.members is defined and data.members is not empty %}
+                        {% for member in data.members %}
+                            <div class="member">
+                                <div class="member-info">{{ member.firstname }} {{ member.lastname }}</div>
+                                <div class="member-submission">
+                                    {% if data.submissions[member.id] is defined %}
+                                        <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                    {% else %}
+                                        <i class="fa fa-times-circle" aria-hidden="true"></i>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+
+{% endembed %}
+

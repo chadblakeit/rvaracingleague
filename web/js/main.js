@@ -1,3 +1,6 @@
+var submenuTimeout = setTimeout(function(){},0);
+var timeoutCleared = 1;
+
 $(document).ready(function(){
     $(".header-user .user, .header-user .avatar").on("click", function(e){
         if ($(".user-dropdown").is(":visible")) {
@@ -66,4 +69,51 @@ $(document).ready(function(){
         });
     }
 
+
+
+
+    $(".league-dropdown-menu").hover(function(){
+        if (timeoutCleared == 0) { clearTimeout(submenuTimeout); timeoutCleared=1; }
+        if (!$(this).next(".submenu").hasClass("active")) {
+            $(this).next(".submenu").addClass("active");
+        }
+    }).mouseout(function(){
+        hideSubmenu();
+    });
+
+    $(".league-dropdown-menu").click(function(){
+        if (timeoutCleared == 0) { clearTimeout(submenuTimeout); timeoutCleared=1; }
+        if (!$(this).next(".submenu").hasClass("active")) {
+            $(this).next(".submenu").addClass("active");
+        } else {
+            $(this).next(".submenu").removeClass("active");
+        }
+    });
+
+    $(".submenu").hover(function(e){
+        if (timeoutCleared == 0) { clearTimeout(submenuTimeout); timeoutCleared=1; }
+        if (!$(this).hasClass("active")) {
+            $(this).addClass("active");
+        }
+    }).mouseout(function(event){
+        var e = event.toElement || event.relatedTarget;
+        while (e && e.parentNode && e.parentNode != window) {
+            if (e.parentNode == this || e == this) {
+                if (e.preventDefault) e.preventDefault;
+                return false;
+            }
+            e = e.parentNode;
+        }
+        hideSubmenu();
+    });
+
+
 });
+
+function hideSubmenu() {
+    timeoutCleared = 0;
+    submenuTimeout = setTimeout(function(){
+        $(".submenu").removeClass("active");
+        timeoutCleared = 1;
+    },100);
+}

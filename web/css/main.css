@@ -137,7 +137,7 @@ html, body {
 
 .main-menu { display: inline-block; }
 .main-menu ul { list-style-type: none; }
-.main-menu ul li { display: inline-block; padding: 8px; margin-right: 10px; }
+.main-menu ul li { display: inline-block; padding: 8px; margin-right: 10px; position: relative; }
 .main-menu ul li i { margin-right: 5px; }
 .main-menu ul li a, .main-menu ul li a:visited { color: #ffffff; text-decoration: none; }
 
@@ -147,6 +147,20 @@ html, body {
 .mobile-menu ul li a, .mobile-menu ul li a:visited { text-decoration: none; }
 .mobile-menu .fa-bars { cursor: pointer; }
 .mobile-menu-dropdown { display: none; }
+
+.down-chevron { position: relative; display: inline-block; height: 10px; }
+.down-chevron:before, .down-chevron:after { position: absolute; display: block; content: ""; border: 5px solid transparent; }
+.down-chevron:before { top: 4px; border-top-color: #fff; }
+.down-chevron:after { top: 2px; border-top-color: #99aabb; }
+
+ul.submenu { display: none; position: absolute; top: 30px; width: 120px; background: #ffffff; border: 1px solid #cccccc; border-radius: 4px; z-index: 100; }
+ul.submenu { list-style-type: none; margin-left: 0; padding-left: 0; }
+ul.submenu li { line-height: 30px; border-bottom: 1px solid #cccccc; display: block; padding: 4px 0 4px 8px; margin: 0; }
+ul.submenu li:last-child { border-bottom: 0; }
+ul.submenu li a, ul.submenu li a:visited { color: #3c5e96; }
+ul.submenu.active { display: block; }
+
+/* -------------------------------------------------------------------------------------------- */
 
 .message-container {
     height: 100px;
@@ -159,6 +173,15 @@ html, body {
     clear: both;
     background: #ffffff;
     min-height: 400px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.content-container-auto {
+    border:1px solid #d7dee5;
+    clear: both;
+    background: #ffffff;
     margin-top: 30px;
     margin-bottom: 30px;
     border-radius: 5px;

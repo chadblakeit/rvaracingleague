@@ -15,6 +15,8 @@ class DriversManager
     protected $driverWins;
     protected $driverTopFives;
     protected $driverTopTens;
+    protected $driverAvg;
+    protected $driverRaces;
 
     public function __construct(Session $session, EntityManager $em)
     {
@@ -38,6 +40,7 @@ class DriversManager
         $driverTopFives = [];
         $driverTopTens = [];
         $numberOfRaces = [];
+        $avgFinish = [];
         $r = 0;
 
         foreach ($allResults as $raceResults) {
@@ -58,6 +61,7 @@ class DriversManager
         }
 
         foreach ($driverPoints as $rid => $points) {
+            $avgFinish[$rid] = round(($points/$numberOfRaces[$rid]),1);
             if ($numberOfRaces[$rid] != count($allResults)) {
                 $d = (count($allResults) - $numberOfRaces[$rid])*50;
                 $driverPoints[$rid] += $d;
@@ -83,6 +87,8 @@ class DriversManager
         $this->driverWins = $driverWins;
         $this->driverTopFives = $driverTopFives;
         $this->driverTopTens = $driverTopTens;
+        $this->driverAvg = $avgFinish;
+        $this->driverRaces = $numberOfRaces;
 
         return $driversArr;
     }
@@ -98,5 +104,11 @@ class DriversManager
     }
     public function getDriverTopTens() {
         return $this->driverTopTens;
+    }
+    public function getDriverAvg() {
+        return $this->driverAvg;
+    }
+    public function getDriverRaces() {
+        return $this->driverRaces;
     }
 }

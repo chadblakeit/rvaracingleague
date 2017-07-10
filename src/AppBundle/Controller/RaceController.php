@@ -66,6 +66,7 @@ class RaceController extends Controller
             'driverwins' => $DriversManager->getDriverWins(),
             'drivertopfives' => $DriversManager->getDriverTopFives(),
             'drivertoptens' => $DriversManager->getDriverTopTens(),
+            'driveravg' => $DriversManager->getDriverAvg(),
             'drivers' => $driversArr
         ));
     }

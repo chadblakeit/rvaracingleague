@@ -50,4 +50,30 @@ class LeagueController extends Controller
             'fosusers' => $totalStandings['fosUsers']
         ));
     }
+
+    /**
+     * @Route("/league/members", name="app.rva.leaguemembers")
+     */
+    public function membersAction(Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            return $this->redirectToRoute("app.rva.home");
+        }
+
+        $members = $LeagueManager->getLeagueMembers();
+
+        // TODO: get only members that are active
+
+        return $this->render(':league:members.html.twig', array(
+            'activerace' => $LeagueManager->getActiveRace(),
+            'activeleague' => $LeagueManager->getActiveLeague(),
+            'data' => $members
+        ));
+    }
 }

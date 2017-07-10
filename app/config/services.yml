@@ -24,4 +24,4 @@ services:
 
   app.email_manager:
       class: AppBundle\Model\EmailManager
-      arguments: ['@mailer', '@twig']
+      arguments: ['@mailer', '@twig', '@doctrine.orm.entity_manager']
