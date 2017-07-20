@@ -214,6 +214,10 @@ class LeagueManager
         return $unsubmittedUsers;
     }
 
-
+    public function getLeagueByID($lid)
+    {
+        $leaguesRepo = $this->em->getRepository('AppBundle:League');
+        return $leaguesRepo->findOneBy(['id' => $lid]);
+    }
 
 }

@@ -66,7 +66,7 @@ class LeagueFormController extends Controller
                 ->setTo($user->getEmail())
                 ->setBody(
                     $this->renderView(
-                        'league/activateemail.html.twig',
+                        'emails/activateemail.html.twig',
                         array('url' => $url, 'leaguename' => $league->getName())
                     ),
                     'text/html'
@@ -309,6 +309,34 @@ class LeagueFormController extends Controller
             }
         }
 
+
+        return new JsonResponse($array);
+    }
+
+    /**
+     * @Route("/league/resendactivation", name="app.rva.resendactivation")
+     */
+    public function resendActivationAction(Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $LeagueManager = $this->get('app.league_manager');
+        $EmailManager = $this->get('app.email_manager');
+
+        $isAjax = $request->isXmlHttpRequest();
+
+        $array = [];
+        $array["isAjax"] = $isAjax;
+
+        if ($isAjax) {
+            $lid = $request->request->get('l');
+            $league = $LeagueManager->getLeagueByID($lid);
+            $salt = md5($this->getParameter('activatesalt') . $user->getId() . $league->getName() . $league->getId());
+            $array['sent'] = $EmailManager->resendLeagueActivation($salt,$league,$user);
+        }
 
         return new JsonResponse($array);
     }

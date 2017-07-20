@@ -55,7 +55,7 @@
                                         {% for league in inactiveleagues %}
                                             <div class="league-selection-container">
                                                 {{ league.name }}
-                                                <a class="resend-activation-link" href="#">Resend Activation</a>
+                                                <a class="resend-activation-link" href="javascript:resendActivation({{ league.id }});">Resend Activation</a>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -117,6 +117,28 @@
                     });
                 });
             });
+            function resendActivation(id) {
+                $.ajax({
+                    url: "{{ path('app.rva.resendactivation') }}",
+                    method: "post",
+                    dataType: "json",
+                    data: { l: id },
+                    beforeSend: function( xhr ) {
+
+                    },
+                    success: function( xhr ) {
+                        console.log(xhr);
+                        if (xhr.sent == true) {
+
+                        } else {
+
+                        }
+                    },
+                    error: function( xhr ) {
+                        console.log(xhr);
+                    }
+                });
+            }
         </script>
     {% endblock %}
 

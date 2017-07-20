@@ -101,14 +101,14 @@ mysql -u root -pvagrant -e "FLUSH PRIVILEGES;" # reload the privileges table
 echo ""
 echo ""
 
-echo "***************************************************"
-echo "****************** Seed Database ******************"
-echo "***************************************************"
-echo "SEEDING DATABASE"
-mysql -u root -pvagrant $DB_NAME < /vagrant/dump.sql # load the schema and seed the new database from your production dump
+#echo "***************************************************"
+#echo "****************** Seed Database ******************"
+#echo "***************************************************"
+#echo "SEEDING DATABASE"
+#mysql -u root -pvagrant $DB_NAME < /vagrant/dump.sql # load the schema and seed the new database from your production dump
 #TODO run cron to create current month's file
-echo ""
-echo ""
+#echo ""
+#echo ""
 
 echo "***************************************************"
 echo "****************** Setup Complete *****************"

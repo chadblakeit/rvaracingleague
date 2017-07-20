@@ -80,6 +80,14 @@ class EmailManager
     public function resendLeagueActivation($activatesalt,$league,$user) {
         $salt = md5($activatesalt . $user->getId() . $league->getName() . $league->getId());
         $url = "http://rva.dev/league/activate?u=".base64_encode($user->getId())."&ac=".$salt."&l=".$league->getId();
+
+        $sent = $this->sendEmail("Activation Link for rvaracingleague.com",
+            $user->getEmail(),
+            "emails/activateemail.html.twig",
+            ['url' => $url, 'leaguename' => $league->getName()]
+        );
+
+        return $sent;
     }
 
     public function testEM() {
