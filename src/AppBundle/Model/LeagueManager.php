@@ -220,4 +220,9 @@ class LeagueManager
         return $leaguesRepo->findOneBy(['id' => $lid]);
     }
 
+    public function getAllActiveLeagues()
+    {
+
+    }
+
 }

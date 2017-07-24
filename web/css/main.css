@@ -437,7 +437,12 @@ button[type=submit]:hover {
     margin-bottom: 10px;
 }
 .inactive-league-container { margin-top: 10px; border-top: 1px solid #f2f2f2; padding-top: 20px; cursor: default; }
-a.resend-activation-link { float: right; display: inline-block; font-size: 18px; padding-top: 2px; }
+.inactive-league-container .league-selection-container { cursor: default; }
+.resend-activation-container { float: right; display: inline-block; font-size: 18px; padding-top: 2px; }
+.inactive-league-container .loading { float: right; }
+.inactive-league-container .loading .fa-spinner { font-size: 30px; }
+.loading { display: none; }
+.loading.active { display: inline-block; }
 
 @media (max-width: 880px) {
     .header-user .user { display: none; }

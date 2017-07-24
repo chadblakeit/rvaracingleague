@@ -55,7 +55,14 @@
                                         {% for league in inactiveleagues %}
                                             <div class="league-selection-container">
                                                 {{ league.name }}
-                                                <a class="resend-activation-link" href="javascript:resendActivation({{ league.id }});">Resend Activation</a>
+                                                <div class="resend-activation-container">
+                                                    <a class="resend-activation-link" href="javascript:void(0);">Resend Activation</a>
+                                                    <input type="hidden" name="resend_activation" value="{{ league.id }}" />
+                                                </div>
+                                                <div class="loading">
+                                                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
                                             </div>
                                         {% endfor %}
                                     </div>
@@ -116,29 +123,53 @@
                         window.location.href = '/league/'+$(this).find("input[name=active-league-id]").val();
                     });
                 });
-            });
-            function resendActivation(id) {
-                $.ajax({
-                    url: "{{ path('app.rva.resendactivation') }}",
-                    method: "post",
-                    dataType: "json",
-                    data: { l: id },
-                    beforeSend: function( xhr ) {
+                $(".resend-activation-link").on("click", function(){
 
-                    },
-                    success: function( xhr ) {
-                        console.log(xhr);
-                        if (xhr.sent == true) {
-
-                        } else {
-
+                    $.ajax({
+                        url: "{{ path('app.rva.resendactivation') }}",
+                        method: "post",
+                        dataType: "json",
+                        data: { l: $(this).next("input[name='resend_activation']").val() },
+                        beforeSend: function( xhr ) {
+                            $(".resend-activation-container").next(".loading").addClass("active");
+                            $(".resend-activation-container").hide();
+                            $(".resend-activation-container").find("a").remove();
+                        },
+                        success: function( xhr ) {
+                            console.log(xhr);
+                            $(".resend-activation-container").next(".loading").removeClass("active");
+                            if (xhr.error) {
+                                $(".resend-activation-container").html("Error");
+                                $(".resend-activation-container").css("color","red");
+                                $(".resend-activation-container").show();
+                                if (xhr.error_msg == "user") {
+                                    alert("You do not own that league");
+                                } else if (xhr.error_msg == "league") {
+                                    alert("Invalid League");
+                                }
+                                return false;
+                            } else if (xhr.sent) {
+                                $(".resend-activation-container").html("Email Sent");
+                                $(".resend-activation-container").css("color","green");
+                                $(".resend-activation-container").show();
+                            } else {
+                                $(".resend-activation-container").html("Error");
+                                $(".resend-activation-container").css("color","red");
+                                $(".resend-activation-container").show();
+                                alert("An error occurred while sending the activation email.");
+                            }
+                        },
+                        error: function( xhr ) {
+                            console.log(xhr);
+                            $(".resend-activation-container").next(".loading").removeClass("active");
+                            $(".resend-activation-container").css("color","red");
+                            $(".resend-activation-container").html("Error");
+                            $(".resend-activation-container").show();
+                            alert("An error occurred while sending the activation email.");
                         }
-                    },
-                    error: function( xhr ) {
-                        console.log(xhr);
-                    }
+                    });
                 });
-            }
+            });
         </script>
     {% endblock %}
 

@@ -328,17 +328,26 @@ class LeagueFormController extends Controller
 
         $isAjax = $request->isXmlHttpRequest();
 
-        $array = [];
-        $array["isAjax"] = $isAjax;
+        $responseData = array("isAjax" => $isAjax, "error" => 0);
 
         if ($isAjax) {
             $lid = $request->request->get('l');
             $league = $LeagueManager->getLeagueByID($lid);
-            $salt = md5($this->getParameter('activatesalt') . $user->getId() . $league->getName() . $league->getId());
-            $array['sent'] = $EmailManager->resendLeagueActivation($salt,$league,$user);
+            if (is_null($league) || empty($league)) {
+                $responseData['sent'] = false;
+                $responseData['error'] = 1;
+                $responseData['error_msg'] = "league";
+            } else if ($league->getFosUser() != $user) {
+                $responseData['sent'] = false;
+                $responseData['error'] = 1;
+                $responseData['error_msg'] = "user";
+            } else {
+                $salt = md5($this->getParameter('activatesalt') . $user->getId() . $league->getName() . $league->getId());
+                $responseData['sent'] = $EmailManager->resendLeagueActivation($salt,$league,$user);
+            }
         }
 
-        return new JsonResponse($array);
+        return new JsonResponse($responseData);
     }
 
 }

@@ -194,9 +194,9 @@ class AdminController extends Controller
 
         $EmailManager = $this->get('app.email_manager');
 
-        $unsubmittedUsers = $LeagueManager->lineupReminder();
+        //$unsubmittedUsers = $LeagueManager->lineupReminder();
 
-        $EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
+        //$EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
 
         return new Response("<html><body><h2>Admin</h2><div>Lineup Reminder</div></body></html>");
     }
