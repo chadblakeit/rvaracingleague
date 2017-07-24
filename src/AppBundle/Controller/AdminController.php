@@ -83,7 +83,7 @@ class AdminController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $ids = [2];
+        $ids = [1];
 
         if (in_array($user->getId(),$ids)) {
             $em = $this->getDoctrine()->getManager();
@@ -194,7 +194,23 @@ class AdminController extends Controller
 
         $EmailManager = $this->get('app.email_manager');
 
-        //$unsubmittedUsers = $LeagueManager->lineupReminder();
+        //$unsubmittedUsers = $LeagueManager->lineupReminderForActiveLeague();
+
+        //$EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
+
+        return new Response("<html><body><h2>Admin</h2><div>Lineup Reminder</div></body></html>");
+    }
+
+    /**
+     * @Route("/admin/alllineupreminders", name="app.rva.alllineupreminders")
+     */
+    public function allLineupRemindersAction(Request $request)
+    {
+        $LeagueManager = $this->get('app.league_manager');
+        $EmailManager = $this->get('app.email_manager');
+        $LeagueManager->globalLineupReminder();
+
+        //$unsubmittedUsers = $LeagueManager->lineupReminderForActiveLeague();
 
         //$EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
 

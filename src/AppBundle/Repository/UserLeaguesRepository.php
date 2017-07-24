@@ -92,4 +92,21 @@ class UserLeaguesRepository extends EntityRepository
         }
     }
 
+    public function getDataForAllActiveLeagues() {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT u.id, u.firstname, u.lastname, ul
+                 FROM AppBundle:UserLeagues ul
+                 JOIN AppBundle:User u
+                 WHERE u = ul.fos_user
+                 JOIN ul.league l
+                 WHERE l.active = 1 AND l.disabled = 0'
+            );
+        try {
+            return $query->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
+
 }

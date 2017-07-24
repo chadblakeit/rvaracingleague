@@ -194,7 +194,7 @@ class LeagueManager
         return $leaguesRepo->findBy(['disabled' => 0, 'active' => 0, 'fos_user' => $fos_user]);
     }
 
-    public function lineupReminder()
+    public function lineupReminderForActiveLeague()
     {
         $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
@@ -220,8 +220,14 @@ class LeagueManager
         return $leaguesRepo->findOneBy(['id' => $lid]);
     }
 
-    public function getAllActiveLeagues()
+    public function globalLineupReminder()
     {
+        $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+
+        $data = $userLeaguesRepo->getDataForAllActiveLeagues();
+
+dump($data);
 
     }
 
