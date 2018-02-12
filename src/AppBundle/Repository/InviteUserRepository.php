@@ -20,7 +20,8 @@ class InviteUserRepository extends EntityRepository
                  JOIN i.league l
                  LEFT JOIN l.fos_user u
                  WHERE i.email = :email
-                 AND i.accepted = 0'
+                 AND i.accepted = 0
+                 AND i.declined = 0'
             )->setParameter('email', $email);
 
         try {

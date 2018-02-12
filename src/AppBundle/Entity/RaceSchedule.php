@@ -69,6 +69,11 @@ class RaceSchedule
     protected $raceResults;
 
     /**
+     * @ORM\Column(name="season", type="integer", length=4)
+     */
+    protected $season;
+
+    /**
      * @return mixed
      */
     public function getRacename()

@@ -1,10 +1,9 @@
 <?php
 
-namespace AppBundle\Model;
+namespace AppBundle\Service;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
-use AppBundle\Model\RaceResultStandings;
 
 class LeagueManager
 {
@@ -12,6 +11,7 @@ class LeagueManager
     protected $activeLeague;
     protected $activerace_id;
     protected $activeleague_id;
+    protected $league_season;
     protected $em;
     protected $session;
 
@@ -21,6 +21,7 @@ class LeagueManager
         $this->em = $em;
         $this->activeleague_id = $this->session->get('activeleague'); // this is a string for some reason
         $this->activerace_id = $this->session->get('activerace');
+        $this->league_season = $this->session->get('league_season');
         if (!is_null($this->activerace_id)) {
             $this->setActiveRace();
         } else {
@@ -44,6 +45,7 @@ class LeagueManager
     {
         $leagueRepo = $this->em->getRepository('AppBundle:League');
         $this->activeLeague = $leagueRepo->findOneBy(['id' => $this->activeleague_id]);
+        $this->setLatestLeagueSeason();
     }
 
     public function initiateActiveLeague($league)
@@ -51,6 +53,46 @@ class LeagueManager
         $this->activeleague_id = $league->getId();
         $this->session->set('activeleague', $this->activeleague_id);
         $this->activeLeague = $league;
+        $this->setLatestLeagueSeason();
+    }
+
+    public function setLatestLeagueSeason()
+    {
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $userLeague = $userLeaguesRepo->findOneBy(['league' => $this->activeleague_id], ['season' => 'DESC']);
+        $this->session->set('league_season', $userLeague->getSeason());
+    }
+
+    public function isUserLeagueValid($league_id, $fos_user)
+    {
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $userLeague = $userLeaguesRepo->findOneBy(['league' => $league_id, 'fos_user' => $fos_user], ['season' => 'DESC']);
+        dump($userLeague);
+        if (is_null($userLeague)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function changeActiveLeague($league_id, $season)
+    {
+        $leagueRepo = $this->em->getRepository('AppBundle:League');
+        $activeLeague = $leagueRepo->findOneBy(['id' => $league_id]);
+
+        $this->activeLeague = $activeLeague;
+        $this->activeleague_id = $activeLeague->getId();
+        $this->league_season = $season;
+        $this->session->set('league_season', $season);
+        $this->session->set('activeleague', $this->activeleague_id);
+    }
+
+    public function getAllLeagueSeasons($fos_user)
+    {
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $userLeagues = $userLeaguesRepo->findBy(['league' => $this->activeLeague, 'fos_user' => $fos_user]);
+        dump($userLeagues);
+        return $userLeagues;
     }
 
     public function getActiveLeague()
@@ -67,6 +109,11 @@ class LeagueManager
     public function getActiveRace()
     {
         return $this->activeRace;
+    }
+
+    public function getLeagueSeason()
+    {
+        return $this->league_season;
     }
 
     public function getLastRaceResults()
@@ -173,9 +220,10 @@ class LeagueManager
     {
         $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
-        $fosUsers = $userLeaguesRepo->getUserInfoByLeague($this->getActiveLeague());
+        $fosUsers = $userLeaguesRepo->getUserInfoByLeague($this->getActiveLeague(),$this->getLeagueSeason());
         dump($fosUsers);
 
+        $hasSubmission = array();
         $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $this->getActiveRace(), 'league' => $this->getActiveLeague()]);
         if (!empty($raceSubmissions) && !is_null($raceSubmissions)) {
             foreach ($raceSubmissions as $submission) {
@@ -230,5 +278,8 @@ class LeagueManager
 dump($data);
 
     }
+
+
+
 
 }

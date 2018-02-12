@@ -51,7 +51,7 @@ class HomeController extends Controller
 
         $lastRaceResults = $LeagueManager->getLastRaceResults();
 
-        return $this->render(':league:home.html.twig', array(
+        return $this->render('::dashboard.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'lastrace' => $lastRaceResults['lastRace'],
             'lastracewinner' => $lastRaceResults['lastRaceWinner'],
@@ -66,7 +66,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/league/{league_id}", name="app.rva.selectleague", requirements={"league_id": "\d+"})
+     * @Route("/league2/{league_id}", name="app.rva.selectleague", requirements={"league_id": "\d+"})
      */
     public function selectLeagueAction($league_id, Request $request)
     {

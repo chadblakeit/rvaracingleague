@@ -19,7 +19,8 @@ class UserLeaguesRepository extends EntityRepository
                 'SELECT ul, l FROM AppBundle:UserLeagues ul
                  JOIN ul.league l
                  WHERE l.disabled = 0
-                 AND ul.fos_user = :fos_user'
+                 AND ul.fos_user = :fos_user
+                 GROUP BY ul.league'
             )->setParameter('fos_user', $fos_user);
 
         try {
@@ -76,15 +77,16 @@ class UserLeaguesRepository extends EntityRepository
         }
     }
 
-    public function getUserInfoByLeague($league) {
+    public function getUserInfoByLeague($league,$season) {
         $query = $this->getEntityManager()
             ->createQuery(
                 'SELECT u.id, u.firstname, u.lastname, u.username, u.email
                  FROM AppBundle:UserLeagues ul
                  JOIN AppBundle:User u
                  WHERE u = ul.fos_user
-                 WHERE ul.league = :league'
-            )->setParameter('league', $league);
+                 WHERE ul.league = :league
+                 AND ul.season = :season'
+            )->setParameters(array('league'=>$league,'season'=>$season));
         try {
             return $query->getResult();
         } catch (\Doctrine\ORM\NoResultException $e) {

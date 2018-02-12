@@ -2,20 +2,11 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\RaceSchedule;
-use AppBundle\Entity\League;
-use AppBundle\Entity\InviteUser;
-use AppBundle\Entity\UserLeagues;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use AppBundle\Controller\LeagueInviteController;
-use AppBundle\Model\LeagueManager;
 
 class DriversController extends Controller
 {

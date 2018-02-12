@@ -16,8 +16,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\Model\UserInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use AppBundle\Controller\LeagueInviteController;
 
 class LeagueFormController extends Controller
 {
@@ -168,6 +166,8 @@ class LeagueFormController extends Controller
             return $this->redirectToRoute("app.rva.home");
         }
 
+        $LeagueManager->setLatestLeagueSeason(); // sets league to the latest season
+
         $EmailManager = $this->get('app.email_manager');
         $EmailManager->setInviteRepo();
 
@@ -191,7 +191,7 @@ class LeagueFormController extends Controller
                 for ($e=0; $e<count($emails); $e++) {
                     if (!empty(trim($emails[$e]))) {
                         // TODO: check for valid email
-                        $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($emails[$e]));
+                        $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($emails[$e]),$LeagueManager->getLeagueSeason());
                         if ($sent) {
                             $invited[] = trim($emails[$e]);
                         } else {
@@ -200,7 +200,7 @@ class LeagueFormController extends Controller
                     }
                 }
             } else {
-                $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($data['email']));
+                $sent = $EmailManager->sendLeagueInviteEmail($LeagueManager->getActiveLeague(),trim($data['email']),$LeagueManager->getLeagueSeason());
                 if ($sent) {
                     $invited[] = trim($data['email']);
                 } else {
@@ -277,19 +277,29 @@ class LeagueFormController extends Controller
                 'fos_user' => $userObj
             ]);
 
+            // TODO: dont allow past season invites to be accepted - decline them
+
             $array['leagueindex'] = $leagueindex;
             $array['invitesuccess'] = false;
             $array['hasUserLeague'] = false;
 
             foreach ($leaguesObj as $league) {
                 if (md5($league->getId().$inviteleague_email.$salt) == $inviteleague) {
+
+                    $userLeagueSeason = $userLeagueRepo->findOneBy(['league' => $league], ['season' => 'DESC']);
+                    $current_season = $userLeagueSeason->getSeason();
+
                     $hasUserLeague = $userLeagueRepo->findOneBy([
                         'league' => $league,
-                        'fos_user' => $user
+                        'fos_user' => $user,
+                        'season' => $current_season
                     ]);
+
                     if (empty($hasUserLeague)) {
+
                         $userLeagues->setFosUser($user);
                         $userLeagues->setLeague($league);
+                        $userLeagues->setSeason($current_season);
                         $em->persist($userLeagues);
                         $em->flush();
                         $array['invitesuccess'] = true;
@@ -298,6 +308,7 @@ class LeagueFormController extends Controller
                             'email' => $user->getEmail(),
                             'league' => $league
                         ]);
+
                         $inviteUser->setAccepted(1);
                         $em->persist($inviteUser);
                         $em->flush();

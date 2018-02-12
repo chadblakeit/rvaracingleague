@@ -32,6 +32,11 @@ class UserLeagues
     protected $league;
 
     /**
+     * @ORM\Column(name="season", type="integer", length=4)
+     */
+    protected $season;
+
+    /**
      * @return mixed
      */
     public function getLeague()
@@ -71,6 +76,20 @@ class UserLeagues
         $this->fos_user = $fos_user;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSeason()
+    {
+        return $this->season;
+    }
 
+    /**
+     * @param mixed $season
+     */
+    public function setSeason($season)
+    {
+        $this->season = $season;
+    }
 
 }

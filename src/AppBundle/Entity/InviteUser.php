@@ -35,6 +35,17 @@ class InviteUser
     protected $accepted;
 
     /**
+     * @ORM\Column(name="season", type="integer", length=4)
+     */
+    protected $season;
+
+    /**
+     * @ORM\Column(name="declined", type="smallint", options={"default" : 0})
+     */
+    protected $declined;
+
+
+    /**
      * @return mixed
      */
     public function getEmail()
@@ -88,6 +99,38 @@ class InviteUser
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSeason()
+    {
+        return $this->season;
+    }
+
+    /**
+     * @param mixed $season
+     */
+    public function setSeason($season)
+    {
+        $this->season = $season;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeclined()
+    {
+        return $this->declined;
+    }
+
+    /**
+     * @param mixed $declined
+     */
+    public function setDeclined($declined)
+    {
+        $this->declined = $declined;
     }
 
 

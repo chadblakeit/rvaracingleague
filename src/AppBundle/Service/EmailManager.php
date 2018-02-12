@@ -1,11 +1,9 @@
 <?php
 
-namespace AppBundle\Model;
+namespace AppBundle\Service;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\HttpFoundation\Session\Session;
 use AppBundle\Entity\InviteUser;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class EmailManager
 {
@@ -46,9 +44,9 @@ class EmailManager
         }
     }
 
-    public function sendLeagueInviteEmail($league,$email) {
+    public function sendLeagueInviteEmail($league,$email,$season) {
 
-        $emailInvited = $this->inviteUserRepo->findOneBy(['league' => $league, 'email' => $email]);
+        $emailInvited = $this->inviteUserRepo->findOneBy(['league' => $league, 'email' => $email, 'season' => $season]);
         if (!empty($emailInvited) && !is_null($emailInvited)) {
             // already invited
             return false;
@@ -58,6 +56,8 @@ class EmailManager
         $inviteUser->setEmail($email);
         $inviteUser->setLeague($league);
         $inviteUser->setAccepted(0);
+        $inviteUser->setSeason($season);
+        $inviteUser->setDeclined(0);
         $this->em->persist($inviteUser);
         $this->em->flush();
 

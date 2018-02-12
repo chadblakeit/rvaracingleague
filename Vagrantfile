@@ -6,7 +6,7 @@
 # Apache
 server_name="rva.dev"
 server_alias="dev"
-box_name="rva"
+box_name="racingbox"
 
 # MySql
 db_name="dev"
