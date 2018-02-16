@@ -30,9 +30,9 @@
         <div class="content-container dimension-10 mobile-dimension-11">
 
             <div class="dashboard-container">
-
                 <div class="drivers-header-information">
                     <div>{{ activeleague.name }}</div>
+                    <div style="float:right;">{{ leagueseason }}</div>
                 </div>
                 <div class="drivers-selection-container">
                     <form name="leagueForm" id="leagueForm" method="post">
@@ -101,7 +101,7 @@
                                         <div class="top10s">Top 10s</div><div class="top5s">Top 5s</div><div class="avg">Avg</div><div class="wins">Wins</div>
                                     </div>
                                     <div class="league-col">
-                                        <div class="picks">Picks</div><div class="points">Points</div>
+                                        <!--<div class="picks">Picks</div>--><div class="points">Points</div>
                                     </div>
                                 </div>
                                 {% for rid, points in driverpoints %}
@@ -112,14 +112,14 @@
                                                 <div class="driver-number">{{ drivers[rid].number }}</div>
                                                 <div class="driver-name">{{ drivers[rid].firstname }}&nbsp;{{ drivers[rid].lastname }}</div>
                                                 <div class="mobile-driver-info"><i class="fa fa-info-circle" aria-hidden="true"></i></div>
-                                                {% if drivers[rid].carmake is defined and drivers[rid].carmake is not empty %}<div class="carmake"><img src="{{ asset('images/'~drivers[rid].carmake~'.png') }}" /></div>{% endif %}
+                                                {#{% if drivers[rid].carmake is defined and drivers[rid].carmake is not empty %}<div class="carmake"><img src="{{ asset('images/'~drivers[rid].carmake~'.png') }}" /></div>{% endif %}#}
                                                 <input type="hidden" name="driverid" value="{{ rid }}" />
                                             </div>
                                             <div class="stats-col">
                                                 <div class="top10s">{{ drivertoptens[rid] }}</div><div class="top5s">{{ drivertopfives[rid] }}</div><div class="avg">{{ driveravg[rid] }}</div><div class="wins">{{ driverwins[rid] }}</div>
                                             </div>
                                             <div class="league-col">
-                                                <div class="picks">0</div><div class="points">{{ points }}</div>
+                                                <!--<div class="picks">0</div>--><div class="points">{{ points }}</div>
                                             </div>
                                         </div>
                                     {% endif %}

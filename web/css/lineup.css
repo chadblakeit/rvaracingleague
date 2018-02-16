@@ -138,8 +138,10 @@
 }
 
 @media (max-width: 675px) {
-    .drivers-list-wrapper .name-col { width: calc(100% / 12 * 9.5); }
+    .drivers-list-wrapper .name-col { width: calc(100% / 12 * 10); }
     .lineup-header .stats-col, .drivers-list-wrapper .stats-col { display: none; }
+    .league-col { width: calc(100% / 12 * 2); }
+    .league-col div.points { width: 100%; text-align: center; }
 }
 
 @media (max-width: 585px) {
@@ -147,7 +149,7 @@
     .submit-team-container { float: none; clear: left; width: 100%; margin-top: 20px; }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 400px) {
     .lineup-header .league-col, .drivers-list-wrapper .league-col, .drivers-list-wrapper .carmake { display: none; }
     .mobile-driver-info { display: inline-block; cursor: pointer; margin-right: 5px; }
     .drivers-list-wrapper .name-col { width: 100%; }

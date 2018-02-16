@@ -31,10 +31,23 @@ class RaceController extends Controller
             return $this->redirectToRoute("app.rva.home");
         }
 
+        $em = $this->getDoctrine()->getManager();
+
+        // check if the active season is the same as this users user_league entry
+        $userLeaguesRepo = $em->getRepository('AppBundle:UserLeagues');
+        $userLeague = $userLeaguesRepo->findOneBy(['fos_user' => $user, 'league' => $LeagueManager->getActiveLeague()],['season' => 'DESC']);
+        dump($userLeague);
+
+        dump($LeagueManager->getActiveLeague()->getId());
+
+        if ($LeagueManager->getLeagueSeason() != $userLeague->getSeason()) {
+            return $this->redirectToRoute("app.rva.leaguehome",['league_id' => $LeagueManager->getActiveLeague()->getId()]);
+        }
+
         $DriversManager = $this->get('app.drivers_manager');
         $driversArr = $DriversManager->getDriverStats();
 
-        $em = $this->getDoctrine()->getManager();
+
         $driversRepo = $em->getRepository('AppBundle:Drivers');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
         $raceSubmission = $raceSubmissionsRepo->findOneBy([
@@ -54,6 +67,7 @@ class RaceController extends Controller
         return $this->render(':race:mylineup.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
+            'leagueseason' => $LeagueManager->getLeagueSeason(),
             'racesubmission' => $raceSubmission,
             'mydrivers' => $myDrivers,
             'lineup_status' => $lineup_status,

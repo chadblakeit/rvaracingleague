@@ -36,11 +36,10 @@
             <div class="dashboard-container">
                 <h2>League - {{ activeleague.name }}</h2>
                 <div class="home-leagues-container">
-
                     <!-- renewals -->
                     {% if leagueRenewals is not empty %}
                         <div class="renew-league-container">
-                            <h3>Renew Leagues</h3>
+                            {{ league_season }}
                             {% for renewal in leagueRenewals %}
                                 <div class="active-league">{{ renewal.league.name }}
                                     <div class="renewbtn">Renew League</div>
@@ -56,8 +55,12 @@
                                         <option value="{{ league.season }}"{% if league_season == league.season %} selected="selected"{% endif %}>{{ league.season }}</option>
                                     {% endfor %}
                                 </select>
-                                {{ dump(league_season) }}
+
                                 {{ dump(activeleague) }}
+
+                                <br />
+                                <i>This is the League specific dashboard</i>
+
                                 {#{% for league in myleagues %}
                                     <div class="active-league">
                                         {% if league.league.id == activeleague.id %}

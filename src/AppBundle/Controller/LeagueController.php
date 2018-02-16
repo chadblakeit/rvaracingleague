@@ -89,14 +89,9 @@ class LeagueController extends Controller
             $str = "League ID is INVALID";
             dump($str);
             // redirect back to dashboard
-
+            $leagueRenewals = [];
         } else {
-
             $leagueRenewals = $LeagueManager->getLeagueUpForRenew($user,$league_id);
-
-
-
-
         }
 
         $leagueSeasons = $LeagueManager->getAllLeagueSeasons($user);
