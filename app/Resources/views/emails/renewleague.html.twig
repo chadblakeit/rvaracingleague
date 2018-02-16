@@ -1,0 +1,8 @@
+<html>
+<body>
+{% trans_default_domain 'FOSUserBundle' %}
+Hi {{ invite_email }}<br><br>
+Renew your racing team of the RVA racing league <strong>{{ league_name }}</strong> for {{ season }}.<br><br>
+<a href="http://rva.dev/login">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+</body>
+</html>

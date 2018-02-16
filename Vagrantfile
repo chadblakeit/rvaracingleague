@@ -9,7 +9,7 @@ server_alias="dev"
 box_name="racingbox"
 
 # MySql
-db_name="dev"
+db_name="rva"
 db_user="vagrantdev"
 db_pass="vagrantdev"
 

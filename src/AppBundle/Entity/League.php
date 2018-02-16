@@ -66,6 +66,11 @@ class League
     private $raceSubmissions;
 
     /**
+     * @ORM\OneToMany(targetEntity="RenewLeague", mappedBy="league")
+     */
+    private $renewLeague;
+
+    /**
      * @return mixed
      */
     public function getName()

@@ -8,6 +8,9 @@
             .create-league-container { margin-top: 10px; background: #f2f2f2; border-top: 1px solid #ccc; padding: 10px; float: left; width: 100%; }
             .create-league-container .create { display: inline-block; float: left; }
             .create-league-container .invite { display: inline-block; float: right; }
+            .renewbtn { float: right; margin-right: 10px; font-size: 18px; color: #218BC3; padding-top: 2px; }
+            .active-league:hover .renewbtn { color: #ffffff; }
+            .renew-league-container { background: #f2f2f2; border-radius: 4px; padding: 5px 20px 5px 20px;  }
         </style>
     {% endblock %}
 
@@ -31,12 +34,23 @@
         <div class="content-container dimension-10">
 
             <div class="dashboard-container">
-                <h2>League -</h2>
+                <h2>League - {{ activeleague.name }}</h2>
                 <div class="home-leagues-container">
+
+                    <!-- renewals -->
+                    {% if leagueRenewals is not empty %}
+                        <div class="renew-league-container">
+                            <h3>Renew Leagues</h3>
+                            {% for renewal in leagueRenewals %}
+                                <div class="active-league">{{ renewal.league.name }}
+                                    <div class="renewbtn">Renew League</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     <form name="leagueForm" id="leagueForm" method="post">
                         <div>
                             <div class="leagues-container">
-                                {{ activeleague.name }}
                                 <select name="league_season">
                                     {% for league in leagueSeasons %}
                                         <option value="{{ league.season }}"{% if league_season == league.season %} selected="selected"{% endif %}>{{ league.season }}</option>
@@ -74,7 +88,19 @@
                         data: {season: $(this).val(), lid: "{{ league_id }}"},
                         success: function (xhr) {
                             console.log(xhr);
-                            //window.location.href = '/league/{{ league_id }}';
+                            window.location.href = '/league/{{ league_id }}';
+                        }
+                    });
+                });
+                $(".renewbtn").on("click", function(){
+                    $.ajax({
+                        url: "{{ path('app.rva.renewleague') }}",
+                        method: "post",
+                        dataType: "json",
+                        data: {lid: "{{ league_id }}"},
+                        success: function (xhr) {
+                            console.log(xhr);
+                            setTimeout(function() { window.location.href = '/league/{{ league_id }}'; }, 2000);
                         }
                     });
                 });

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\UserLeagues;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -279,7 +280,40 @@ dump($data);
 
     }
 
+    public function getLeagueUpForRenew($fos_user, $league_id)
+    {
+        $renewLeagueRepo = $this->em->getRepository('AppBundle:RenewLeague');
+        $leagueRenewals = $renewLeagueRepo->findBy(['fos_user'=>$fos_user, 'league'=>$league_id, 'season'=>date("Y"), 'renewed' => 0]);
+        dump($leagueRenewals);
 
+        return $leagueRenewals;
+    }
+
+    public function renewLeague($fos_user, $league, $season)
+    {
+        $renewLeagueRepo = $this->em->getRepository('AppBundle:RenewLeague');
+        $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $leagueRepo = $this->em->getRepository('AppBundle:League');
+        $userLeaguesAlreadyRenewed = $userLeaguesRepo->findOneBy(['league' => $league, 'fos_user' => $fos_user, 'season' => $season]);
+        dump($userLeaguesAlreadyRenewed);
+
+        $leagueObj = $leagueRepo->findOneBy(['id'=>$league]);
+
+        if (is_null($userLeaguesAlreadyRenewed)) {
+            $userLeague = new UserLeagues();
+            $userLeague->setSeason($season);
+            $userLeague->setLeague($leagueObj);
+            $userLeague->setFosUser($fos_user);
+            $this->em->persist($userLeague);
+            $this->em->flush();
+
+            $renewLeague = $renewLeagueRepo->findOneBy(['league' => $league, 'fos_user' => $fos_user, 'season' => $season]);
+            $renewLeague->setRenewed(1);
+            $this->em->persist($renewLeague);
+            $this->em->flush();
+        }
+
+    }
 
 
 }

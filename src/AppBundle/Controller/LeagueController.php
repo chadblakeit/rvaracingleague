@@ -88,7 +88,14 @@ class LeagueController extends Controller
         if (!$LeagueManager->isUserLeagueValid($league_id, $user)) {
             $str = "League ID is INVALID";
             dump($str);
+            // redirect back to dashboard
+
         } else {
+
+            $leagueRenewals = $LeagueManager->getLeagueUpForRenew($user,$league_id);
+
+
+
 
         }
 
@@ -99,7 +106,8 @@ class LeagueController extends Controller
             'activeleague' => $LeagueManager->getActiveLeague(),
             'league_season' => $LeagueManager->getLeagueSeason(),
             'leagueSeasons' => $leagueSeasons,
-            'league_id' => $league_id
+            'league_id' => $league_id,
+            'leagueRenewals' => $leagueRenewals
         ));
     }
 
@@ -138,6 +146,31 @@ class LeagueController extends Controller
 
         if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
             $responseData['error-post'] = "active league or race is null - post-season change";
+        }
+
+        return new JsonResponse($responseData);
+    }
+
+    /**
+     * @Route("/league/renew", name="app.rva.renewleague")
+     */
+    public function renewLeague(Request $request)
+    {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+
+        $isAjax = $request->isXmlHttpRequest();
+        $responseData = array("isAjax" => $isAjax);
+
+        $LeagueManager = $this->get('app.league_manager');
+
+        if ($isAjax) {
+            $league_id = $request->request->get('lid');
+            $season = date("Y");
+            $LeagueManager->renewLeague($user, $league_id, $season);
+            $responseData['renew'] = 'successful';
         }
 
         return new JsonResponse($responseData);

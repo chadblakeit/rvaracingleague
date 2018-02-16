@@ -47,6 +47,11 @@ class User extends BaseUser
     private $league;
 
     /**
+     * @ORM\OneToMany(targetEntity="RenewLeague", mappedBy="fos_user")
+     */
+    private $renewLeague;
+
+    /**
      * @return mixed
      */
     public function getFirstname()
