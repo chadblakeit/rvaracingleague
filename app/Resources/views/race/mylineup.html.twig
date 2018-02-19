@@ -28,11 +28,9 @@
     {% block content %}
 
         <div class="content-container dimension-10 mobile-dimension-11">
-
             <div class="dashboard-container">
                 <div class="drivers-header-information">
-                    <div>{{ activeleague.name }}</div>
-                    <div style="float:right;">{{ leagueseason }}</div>
+                    <h2 style="margin-bottom:0;">{{ activeleague.name }} <span style="float:right;">{{ league_season }}</span></h2>
                 </div>
                 <div class="drivers-selection-container">
                     <form name="leagueForm" id="leagueForm" method="post">

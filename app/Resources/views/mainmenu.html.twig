@@ -3,6 +3,7 @@
         <li><a href="{{ path('app.rva.raceschedule') }}">Schedule</a></li>
         <li><a href="javascript:void(0);" class="league-dropdown-menu">League <i class="down-chevron"></i></a>
             <ul class="submenu">
+                <li><a href="{{ path('app.rva.leaguehome', {'league_id':activeleague.id}) }}">League Home</a></li>
                 <li><a href="{{ path('app.rva.leaguemembers') }}">Members</a></li>
                 <li><a href="{{ path('app.rva.racelineups', {'race':activerace.id}) }}">All Lineups</a></li>
                 <li><a href="{{ path('app.rva.mylineup') }}">My Lineup</a></li>

@@ -225,6 +225,22 @@ class RaceSchedule
         $this->raceSubmissions = $raceSubmissions;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSeason()
+    {
+        return $this->season;
+    }
+
+    /**
+     * @param mixed $season
+     */
+    public function setSeason($season)
+    {
+        $this->season = $season;
+    }
+
 
 
 }

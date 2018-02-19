@@ -419,6 +419,7 @@ button[type=submit]:hover {
 .race-name-info .race-info { display: inline-block; margin-left: 30px; float: left; clear: left; }
 .race-name-info .race-date { position: absolute; right: 0; top: 20px; width: auto; text-align: right; }
 .race-name-info .race-date .race-time { display: block; }
+.race-name-info .results-link { font-size: 14px; margin-left: 10px; line-height: 28px; vertical-align: top; }
 
 .mobile-driver-info { display: none; float: right; cursor: pointer; }
 

@@ -36,17 +36,24 @@ class RaceController extends Controller
         // check if the active season is the same as this users user_league entry
         $userLeaguesRepo = $em->getRepository('AppBundle:UserLeagues');
         $userLeague = $userLeaguesRepo->findOneBy(['fos_user' => $user, 'league' => $LeagueManager->getActiveLeague()],['season' => 'DESC']);
-        dump($userLeague);
-
-        dump($LeagueManager->getActiveLeague()->getId());
-
         if ($LeagueManager->getLeagueSeason() != $userLeague->getSeason()) {
-            return $this->redirectToRoute("app.rva.leaguehome",['league_id' => $LeagueManager->getActiveLeague()->getId()]);
+            // set latest season
+            $LeagueManager->setLeagueSeason($userLeague->getSeason());
+        }
+
+        // need to determine if the active race season, is the same as the users league season
+        // if the user hasn't renewed, then redirect back to league dashboard
+        $leagueSeasonNotApproved = false;
+        $activeRaceSeason = $LeagueManager->getActiveRace();
+        if ($activeRaceSeason->getSeason() != $userLeague->getSeason()) {
+            $leagueSeasonNotApproved = true;
+            return $this->redirectToRoute("app.rva.leaguehome",['league_id' => $userLeague->getLeague()->getId()]);
         }
 
         $DriversManager = $this->get('app.drivers_manager');
         $driversArr = $DriversManager->getDriverStats();
 
+        dump($driversArr);
 
         $driversRepo = $em->getRepository('AppBundle:Drivers');
         $raceSubmissionsRepo = $em->getRepository('AppBundle:RaceSubmissions');
@@ -67,7 +74,7 @@ class RaceController extends Controller
         return $this->render(':race:mylineup.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
-            'leagueseason' => $LeagueManager->getLeagueSeason(),
+            'league_season' => $LeagueManager->getLeagueSeason(),
             'racesubmission' => $raceSubmission,
             'mydrivers' => $myDrivers,
             'lineup_status' => $lineup_status,
@@ -263,6 +270,8 @@ class RaceController extends Controller
 
         return $this->render(':race:results.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
+            'activeleague' => $LeagueManager->getActiveLeague(),
+            'league_season' => $LeagueManager->getLeagueSeason(),
             'race' => $raceObj,
             'driverResults' => $raceResultStandings['driverResults'],
             'userTotalPoints' => $raceResultStandings['totalPoints'],

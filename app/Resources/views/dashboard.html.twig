@@ -31,7 +31,7 @@
         <div class="content-container dimension-10">
 
             <div class="dashboard-container">
-                <h2>My Leagues - Dashboard</h2>
+                <h2>My Leagues <span style="float:right;">{{ leagueseason }}</span></h2>
                 <div class="home-leagues-container">
                     <form name="leagueForm" id="leagueForm" method="post">
                         <div>
@@ -120,7 +120,7 @@
             $(document).ready(function() {
                 $(".active-league").each(function(){
                     $(this).on("click", function(){
-                        window.location.href = '/league/'+$(this).find("input[name=active-league-id]").val();
+                        window.location.href = '/league/select/'+$(this).find("input[name=active-league-id]").val();
                     });
                 });
                 $(".resend-activation-link").on("click", function(){

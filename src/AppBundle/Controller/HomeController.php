@@ -38,11 +38,19 @@ class HomeController extends Controller
         if (is_null($LeagueManager->getActiveLeague())) {
             if (count($myLeaguesObj) >= 1) {
                 $LeagueManager->initiateActiveLeague($myLeaguesObj[0]->getLeague());
+                $LeagueManager->setLatestLeagueSeason($user);
             }
         }
 
+        if (is_null($LeagueManager->getLeagueSeason())) {
+            $LeagueManager->setLeagueSeason(date("Y"));
+            $leagueSeasonwasnull = "League season was null";
+            //dump($leagueSeasonwasnull);
+        }
+        //dump($LeagueManager->getLeagueSeason());
+
         // invited leagues
-        $invitedLeagues = $em->getRepository('AppBundle:InviteUser')->findAllInvitedLeagues($user->getEmail());
+        $invitedLeagues = $em->getRepository('AppBundle:InviteUser')->findAllInvitedLeagues($user->getEmail(), $LeagueManager->getLeagueSeason());
         $LeagueInvite = new LeagueInviteController();
         $LeagueInvite->inviteSalt = $this->getParameter('inviteleaguesalt');
 
@@ -58,6 +66,7 @@ class HomeController extends Controller
             'lastracepoints' => $lastRaceResults['lastRacePoints'],
             'myleagues' => $myLeaguesObj,
             'activeleague' => $LeagueManager->getActiveLeague(),
+            'leagueseason' => $LeagueManager->getLeagueSeason(),
             'invitedleagues' => $invitedLeagues,
             'inactiveleagues' => $myInactiveLeagues,
             'LeagueInvite' => $LeagueInvite,
@@ -66,7 +75,7 @@ class HomeController extends Controller
     }
 
     /**
-     * @Route("/league2/{league_id}", name="app.rva.selectleague", requirements={"league_id": "\d+"})
+     * @Route("/league/select/{league_id}", name="app.rva.selectleague", requirements={"league_id": "\d+"})
      */
     public function selectLeagueAction($league_id, Request $request)
     {
@@ -75,7 +84,7 @@ class HomeController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
 
-        $session = $request->getSession();
+        /*$session = $request->getSession();
 
         // check if the league_id and this user actually belongs to the league
         $em = $this->getDoctrine()->getManager();
@@ -93,9 +102,16 @@ class HomeController extends Controller
         } else {
             // everything is good, assign league id session
             $session->set('activeleague',$league_id);
+        }*/
+
+        $LeagueManager = $this->get('app.league_manager');
+        if (is_null($LeagueManager->getActiveLeague()) || is_null($LeagueManager->getActiveRace())) {
+            //return $this->redirectToRoute("app.rva.home"); // TODO: do a return jsonresponse error to redirect
         }
 
-        return $this->redirectToRoute('app.rva.mylineup');
+        $LeagueManager->selectLeagueFromDashboard($league_id, $user);
+
+        return $this->redirectToRoute('app.rva.leaguehome',['league_id'=>$league_id]);
 
     }
 

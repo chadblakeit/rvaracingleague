@@ -42,11 +42,24 @@ class LeagueManager
         $this->activeRace = $activeRace;
     }
 
+    public function selectLeagueFromDashboard($league_id, $fos_user)
+    {
+        $userLeagueRepo = $this->em->getRepository('AppBundle:UserLeagues');
+        $this->activeleague_id = $league_id;
+        $leagueRepo = $this->em->getRepository('AppBundle:League');
+        $this->activeLeague = $leagueRepo->findOneBy(['id' => $this->activeleague_id]);
+        $this->session->set('activeleague', $this->activeleague_id);
+
+        $userLeague = $userLeagueRepo->findOneBy(['league' => $this->activeleague_id, 'fos_user' => $fos_user],['season' => 'DESC']);
+        $this->league_season = $userLeague->getSeason();
+        $this->session->set('league_season', $this->league_season);
+    }
+
     public function setActiveLeague()
     {
         $leagueRepo = $this->em->getRepository('AppBundle:League');
         $this->activeLeague = $leagueRepo->findOneBy(['id' => $this->activeleague_id]);
-        $this->setLatestLeagueSeason();
+        //$this->setLatestLeagueSeason();
     }
 
     public function initiateActiveLeague($league)
@@ -54,21 +67,27 @@ class LeagueManager
         $this->activeleague_id = $league->getId();
         $this->session->set('activeleague', $this->activeleague_id);
         $this->activeLeague = $league;
-        $this->setLatestLeagueSeason();
+        //$this->setLatestLeagueSeason();
     }
 
-    public function setLatestLeagueSeason()
+    public function setLatestLeagueSeason($fos_user)
     {
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
-        $userLeague = $userLeaguesRepo->findOneBy(['league' => $this->activeleague_id], ['season' => 'DESC']);
+        $userLeague = $userLeaguesRepo->findOneBy(['league' => $this->activeleague_id, 'fos_user' => $fos_user], ['season' => 'DESC']);
         $this->session->set('league_season', $userLeague->getSeason());
+    }
+
+    public function setLeagueSeason($season)
+    {
+        $this->league_season = $season;
+        $this->session->set('league_season', $season);
     }
 
     public function isUserLeagueValid($league_id, $fos_user)
     {
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
         $userLeague = $userLeaguesRepo->findOneBy(['league' => $league_id, 'fos_user' => $fos_user], ['season' => 'DESC']);
-        dump($userLeague);
+        //dump($userLeague);
         if (is_null($userLeague)) {
             return false;
         } else {
@@ -92,7 +111,7 @@ class LeagueManager
     {
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
         $userLeagues = $userLeaguesRepo->findBy(['league' => $this->activeLeague, 'fos_user' => $fos_user]);
-        dump($userLeagues);
+        //dump($userLeagues);
         return $userLeagues;
     }
 
@@ -155,16 +174,27 @@ class LeagueManager
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
         $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
         $raceResultsRepo = $this->em->getRepository('AppBundle:RaceResults');
-        $completedRaces = $raceResultsRepo->findAll();
+        $raceScheduleRepo = $this->em->getRepository('AppBundle:RaceSchedule');
+
+        // get all race_schedule races for league_season
+        $raceScheduleBySeason = $raceScheduleRepo->findBy(['season' => $this->getLeagueSeason()]);
+        foreach ($raceScheduleBySeason as $raceSch) {
+            $scheduleIDs[] = $raceSch->getId();
+        }
+        //dump($scheduleIDs);
+        $raceResultsByIDs = $raceResultsRepo->getResultsByRaceIDs($scheduleIDs);
+
+        //$completedRaces = $raceResultsRepo->findAll();
         $raceIDs = array();
-        foreach ($completedRaces as $race) {
+        $resultsArr = array();
+        foreach ($raceResultsByIDs as $race) {
             $raceIDs[] = $race->getId();
             foreach ($race->getResults() as $key => $driverid) {
                 $resultsArr[$race->getId()][intval($driverid)] = $key + 1;
             }
         }
 
-        $userLeagues = $userLeaguesRepo->findBy(['league' => $this->getActiveLeague()]);
+        $userLeagues = $userLeaguesRepo->findBy(['league' => $this->getActiveLeague(), 'season' => $this->getLeagueSeason()]);
         foreach ($userLeagues as $userLeague) {
             $fos_user_ids[] = $userLeague->getFosUser()->getId();
         }
@@ -201,8 +231,6 @@ class LeagueManager
             $i++;
         }
 
-        
-
         foreach ($individualRaceResults as $rid => $raceresults) {
             asort($raceresults);
             $individualRaceResults[$rid] = $raceresults;
@@ -222,7 +250,7 @@ class LeagueManager
         $raceSubmissionsRepo = $this->em->getRepository('AppBundle:RaceSubmissions');
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
         $fosUsers = $userLeaguesRepo->getUserInfoByLeague($this->getActiveLeague(),$this->getLeagueSeason());
-        dump($fosUsers);
+        //dump($fosUsers);
 
         $hasSubmission = array();
         $raceSubmissions = $raceSubmissionsRepo->findBy(['race' => $this->getActiveRace(), 'league' => $this->getActiveLeague()]);
@@ -276,15 +304,15 @@ class LeagueManager
 
         $data = $userLeaguesRepo->getDataForAllActiveLeagues();
 
-dump($data);
+//dump($data);
 
     }
 
     public function getLeagueUpForRenew($fos_user, $league_id)
     {
         $renewLeagueRepo = $this->em->getRepository('AppBundle:RenewLeague');
-        $leagueRenewals = $renewLeagueRepo->findBy(['fos_user'=>$fos_user, 'league'=>$league_id, 'season'=>date("Y"), 'renewed' => 0]);
-        dump($leagueRenewals);
+        $leagueRenewals = $renewLeagueRepo->findOneBy(['fos_user'=>$fos_user, 'league'=>$league_id, 'season'=>date("Y"), 'renewed' => 0]);
+        //dump($leagueRenewals);
 
         return $leagueRenewals;
     }
@@ -295,7 +323,7 @@ dump($data);
         $userLeaguesRepo = $this->em->getRepository('AppBundle:UserLeagues');
         $leagueRepo = $this->em->getRepository('AppBundle:League');
         $userLeaguesAlreadyRenewed = $userLeaguesRepo->findOneBy(['league' => $league, 'fos_user' => $fos_user, 'season' => $season]);
-        dump($userLeaguesAlreadyRenewed);
+        //dump($userLeaguesAlreadyRenewed);
 
         $leagueObj = $leagueRepo->findOneBy(['id'=>$league]);
 
@@ -311,6 +339,8 @@ dump($data);
             $renewLeague->setRenewed(1);
             $this->em->persist($renewLeague);
             $this->em->flush();
+
+            $this->setLeagueSeason($season);
         }
 
     }

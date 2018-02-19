@@ -37,6 +37,7 @@ class LeagueController extends Controller
         return $this->render(':league:standings.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
+            'league_season' => $LeagueManager->getLeagueSeason(),
             'totalpoints' => $totalStandings['totalPoints'],
             'racewinners' => $totalStandings['raceWinners'],
             'fosusers' => $totalStandings['fosUsers']
@@ -65,6 +66,7 @@ class LeagueController extends Controller
         return $this->render(':league:members.html.twig', array(
             'activerace' => $LeagueManager->getActiveRace(),
             'activeleague' => $LeagueManager->getActiveLeague(),
+            'league_season' => $LeagueManager->getLeagueSeason(),
             'data' => $members
         ));
     }
@@ -87,7 +89,7 @@ class LeagueController extends Controller
         // check if the user belongs to this league_id
         if (!$LeagueManager->isUserLeagueValid($league_id, $user)) {
             $str = "League ID is INVALID";
-            dump($str);
+            //dump($str);
             // redirect back to dashboard
             $leagueRenewals = [];
         } else {

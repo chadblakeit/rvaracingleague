@@ -166,7 +166,7 @@ class LeagueFormController extends Controller
             return $this->redirectToRoute("app.rva.home");
         }
 
-        $LeagueManager->setLatestLeagueSeason(); // sets league to the latest season
+        //$LeagueManager->setLatestLeagueSeason(); // sets league to the latest season
 
         $EmailManager = $this->get('app.email_manager');
         $EmailManager->setInviteRepo();
@@ -214,7 +214,8 @@ class LeagueFormController extends Controller
             'raceleagueid' => $LeagueManager->getActiveLeague()->getId(),
             'invited' => $invited,
             'already_invited' => $already_invited,
-            'league' => $LeagueManager->getActiveLeague()
+            'league' => $LeagueManager->getActiveLeague(),
+            'league_season' => $LeagueManager->getLeagueSeason()
         ));
     }
 
@@ -286,6 +287,11 @@ class LeagueFormController extends Controller
             foreach ($leaguesObj as $league) {
                 if (md5($league->getId().$inviteleague_email.$salt) == $inviteleague) {
 
+                    $inviteUser = $inviteRepo->findOneBy([
+                        'email' => $user->getEmail(),
+                        'league' => $league
+                    ],['season' => 'DESC']);
+
                     $userLeagueSeason = $userLeagueRepo->findOneBy(['league' => $league], ['season' => 'DESC']);
                     $current_season = $userLeagueSeason->getSeason();
 
@@ -295,6 +301,8 @@ class LeagueFormController extends Controller
                         'season' => $current_season
                     ]);
 
+                    // TODO: find any past league invites that were not accepted, and decline them
+
                     if (empty($hasUserLeague)) {
 
                         $userLeagues->setFosUser($user);
@@ -303,11 +311,6 @@ class LeagueFormController extends Controller
                         $em->persist($userLeagues);
                         $em->flush();
                         $array['invitesuccess'] = true;
-
-                        $inviteUser = $inviteRepo->findOneBy([
-                            'email' => $user->getEmail(),
-                            'league' => $league
-                        ]);
 
                         $inviteUser->setAccepted(1);
                         $em->persist($inviteUser);

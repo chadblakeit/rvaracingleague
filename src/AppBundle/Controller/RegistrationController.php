@@ -167,7 +167,7 @@ class RegistrationController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $invitedLeagues = $em->getRepository('AppBundle:InviteUser')
-            ->findAllInvitedLeagues($user->getEmail());
+            ->findAllInvitedLeagues($user->getEmail(), date("Y"));
 //dump($invitedLeagues);
         $LeagueInvite = new LeagueInviteController();
         $LeagueInvite->inviteSalt = $this->getParameter('inviteleaguesalt');

@@ -33,8 +33,6 @@ class DriversManager
         $resultsRepo = $this->em->getRepository('AppBundle:RaceResults');
         $allResults = $resultsRepo->findAll();
 
-        //dump($allResults);
-
         $driverPoints = [];
         $driverWins = [];
         $driverTopFives = [];
@@ -72,6 +70,8 @@ class DriversManager
         //dump($driverPoints);
 
         $driversArr = [];
+        $driversWithPoints = array_keys($driverPoints);
+        //dump($driversWithPoints);
 
         foreach ($this->drivers as $driver) {
             $driversArr[$driver->getId()] = [
@@ -81,6 +81,14 @@ class DriversManager
                 'inactive' => $driver->getInactive(),
                 'carmake' => $driver->getCarmake()
             ];
+            if ($driver->getInactive() == 0 && !in_array($driver->getId(),$driversWithPoints)) {
+                $driverPoints[$driver->getId()] = 0;
+                $driverWins[$driver->getId()] = 0;
+                $driverTopFives[$driver->getId()] = 0;
+                $driverTopTens[$driver->getId()] = 0;
+                $avgFinish[$driver->getId()] = 0;
+                $numberOfRaces[$driver->getId()] = 0;
+            }
         }
 
         $this->driverPoints = $driverPoints;

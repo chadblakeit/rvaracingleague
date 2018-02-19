@@ -12,5 +12,17 @@ use Doctrine\ORM\EntityRepository;
  */
 class RaceResultsRepository extends EntityRepository
 {
+    public function getResultsByRaceIDs($ids) {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT rr FROM AppBundle:RaceResults rr
+                 WHERE rr.id IN (:ids)'
+            )->setParameters(array('ids'=>$ids));
 
+        try {
+            return $query->getResult();
+        } catch (\Doctrine\ORM\NoResultException $e) {
+            return null;
+        }
+    }
 }

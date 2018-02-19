@@ -211,4 +211,20 @@ class AdminController extends Controller
         return new Response("<html><body><h2>Admin</h2><div>Lineup Reminder</div></body></html>");
     }
 
+    /**
+     * @Route("/admin/renewleagues", name="app.rva.alllineupreminders")
+     */
+    public function renewLeaguesAction(Request $request)
+    {
+        $LeagueManager = $this->get('app.league_manager');
+        $EmailManager = $this->get('app.email_manager');
+        $LeagueManager->globalLineupReminder();
+
+        //$unsubmittedUsers = $LeagueManager->lineupReminderForActiveLeague();
+
+        //$EmailManager->sendLineupReminderEmails($unsubmittedUsers,$LeagueManager->getActiveLeague(),$LeagueManager->getActiveRace());
+
+        return new Response("<html><body><h2>Admin</h2><div>Lineup Reminder</div></body></html>");
+    }
+
 }

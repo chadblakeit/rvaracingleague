@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class InviteUserRepository extends EntityRepository
 {
-    public function findAllInvitedLeagues($email)
+    public function findAllInvitedLeagues($email,$season)
     {
         $query = $this->getEntityManager()
             ->createQuery(
@@ -20,9 +20,10 @@ class InviteUserRepository extends EntityRepository
                  JOIN i.league l
                  LEFT JOIN l.fos_user u
                  WHERE i.email = :email
+                 AND i.season = :season
                  AND i.accepted = 0
                  AND i.declined = 0'
-            )->setParameter('email', $email);
+            )->setParameters(array('email' => $email, 'season' => $season));
 
         try {
             return $query->getResult();

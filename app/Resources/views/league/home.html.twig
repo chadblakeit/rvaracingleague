@@ -2,7 +2,7 @@
 
     {% block styles %}
         <style>
-            .active-league { display:block;background:#dce6ef;padding:15px 10px 15px 10px;color:#000000;text-align:left;cursor:pointer;border-radius:4px;font-weight:700;font-size:22px;margin-bottom:10px; }
+            .active-league { display:block;background:#dce6ef;padding:15px 10px 15px 10px;color:#000000;text-align:left;cursor:pointer;border-radius:4px;font-weight:700;font-size:22px;margin-bottom:10px;margin-top:5px; }
             .active-league:hover { background: #6d8dbf; color: #ffffff;  }
             .active-league .fa-flag-checkered { margin-left: 5px; margin-right: 10px; color: #1a2d4c; }
             .create-league-container { margin-top: 10px; background: #f2f2f2; border-top: 1px solid #ccc; padding: 10px; float: left; width: 100%; }
@@ -10,7 +10,14 @@
             .create-league-container .invite { display: inline-block; float: right; }
             .renewbtn { float: right; margin-right: 10px; font-size: 18px; color: #218BC3; padding-top: 2px; }
             .active-league:hover .renewbtn { color: #ffffff; }
-            .renew-league-container { background: #f2f2f2; border-radius: 4px; padding: 5px 20px 5px 20px;  }
+            .renew-league-container { border: 1px solid #cccccc; border-radius: 4px; padding: 12px 16px 5px 16px;  }
+            .renew-league-container .loading { float: right; display: none; }
+
+            .dashboard-container h2 { display: inline-block; float: left; }
+            .change-season-container { float: right; }
+            .dashboard-leagues { clear: both; }
+
+            .league_season { font-size: 18px; padding: 4px; }
         </style>
     {% endblock %}
 
@@ -18,7 +25,7 @@
         <div class="race-name-info dimension-10 mobile-dimension-11">
             <div class="race-name">
                 <i class="fa fa-tachometer" aria-hidden="true"></i>
-                {{ activerace.racename }}
+                {{ activerace.racename }}<a href="{{ path("app.rva.raceresults", {'race':activerace.id}) }}" class="results-link">Results</a>
             </div>
             <div class="race-info">
                 {{ activerace.trackname }} in {{ activerace.location }}<br />
@@ -34,49 +41,60 @@
         <div class="content-container dimension-10">
 
             <div class="dashboard-container">
-                <h2>League - {{ activeleague.name }}</h2>
-                <div class="home-leagues-container">
-                    <!-- renewals -->
-                    {% if leagueRenewals is not empty %}
-                        <div class="renew-league-container">
-                            {{ league_season }}
-                            {% for renewal in leagueRenewals %}
-                                <div class="active-league">{{ renewal.league.name }}
-                                    <div class="renewbtn">Renew League</div>
-                                </div>
+                <form name="leagueForm" id="leagueForm" method="post">
+                    <h2>{{ activeleague.name }} - {{ league_season }}</h2>
+                    <div class="change-season-container">
+                        <select name="league_season">
+                            {% for league in leagueSeasons %}
+                                <option value="{{ league.season }}"{% if league_season == league.season %} selected="selected"{% endif %}>{{ league.season }}</option>
                             {% endfor %}
-                        </div>
-                    {% endif %}
-                    <form name="leagueForm" id="leagueForm" method="post">
-                        <div>
-                            <div class="leagues-container">
-                                <select name="league_season">
-                                    {% for league in leagueSeasons %}
-                                        <option value="{{ league.season }}"{% if league_season == league.season %} selected="selected"{% endif %}>{{ league.season }}</option>
-                                    {% endfor %}
-                                </select>
+                        </select>
+                    </div>
+                    <div class="dashboard-leagues">
+                        <div class="home-leagues-container">
 
-                                {{ dump(activeleague) }}
-
-                                <br />
-                                <i>This is the League specific dashboard</i>
-
-                                {#{% for league in myleagues %}
-                                    <div class="active-league">
-                                        {% if league.league.id == activeleague.id %}
-                                            <i class="fa fa-flag-checkered" aria-hidden="true"></i>
-                                        {% endif %}
-                                        {{ league.league.name }}
-                                        <input type="hidden" name="active-league-id" value="{{ league.league.id }}" />
+                            <!-- renewals -->
+                            {% if leagueRenewals is not empty %}
+                                <div class="renew-league-container">
+                                    <h3>League Renewal</h3>
+                                    <div class="active-league">{{ leagueRenewals.league.name }}
+                                        <div class="renewbtn">{{ leagueRenewals.season }}</div>
+                                        <div class="loading">
+                                            <i class="fa fa-spinner fa-pulse fa-fw"></i>
+                                        </div>
                                     </div>
-                                {% endfor %}
-                                #}
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                                </div><br />
+                            {% endif %}
 
+                            <div>
+                                <div class="leagues-container">
+
+                                    <a href="{{ path("app.rva.mylineup") }}">My Race Lineup</a>
+                                    <br />
+                                    <br />
+                                    <i>This is the League specific dashboard - information about the league and race will be posted here. You can toggle the year dropdown for past seasons data.</i>
+                                    <i>For past seasons data, the league members, standings and stats will be for that season. The My Lineup will always be the most current year and the active race.
+                                        If you have not renewed the league for the current year, you will not be able to access the My Lineup page.</i>
+<br />
+<br />
+                                    <i>The Driver Stats have not been updated yet for per year</i>
+                                    {#{% for league in myleagues %}
+                                        <div class="active-league">
+                                            {% if league.league.id == activeleague.id %}
+                                                <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+                                            {% endif %}
+                                            {{ league.league.name }}
+                                            <input type="hidden" name="active-league-id" value="{{ league.league.id }}" />
+                                        </div>
+                                    {% endfor %}
+                                    #}
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     {% endblock %}
 
@@ -95,12 +113,18 @@
                         }
                     });
                 });
-                $(".renewbtn").on("click", function(){
+                $(".renew-league-container .active-league").on("click", function(){
+                    if ($(this).hasClass("renewing")) { return false; }
+                    $(this).addClass("renewing");
                     $.ajax({
                         url: "{{ path('app.rva.renewleague') }}",
                         method: "post",
                         dataType: "json",
                         data: {lid: "{{ league_id }}"},
+                        beforeSend: function( xhr ) {
+                            $(".renew-league-container .renewbtn").hide();
+                            $(".renew-league-container .loading").show();
+                        },
                         success: function (xhr) {
                             console.log(xhr);
                             setTimeout(function() { window.location.href = '/league/{{ league_id }}'; }, 2000);

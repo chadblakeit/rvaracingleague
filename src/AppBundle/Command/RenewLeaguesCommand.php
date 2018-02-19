@@ -62,6 +62,7 @@ class RenewLeaguesCommand extends ContainerAwareCommand
                 $leagueObj = $leagueRepo->findOneBy(['id' => $league->getLeague()]);
                 $EmailManager->sendEmail("RVA Racing League - Renew Season", $fosUser->getEmail(), "emails/renewleague.html.twig", ['invite_email' => $fosUser->getEmail(), 'league_name' => $leagueObj->getName(), 'season' => date("Y")]);
             } else {
+                dump($league->getFosUser());
                 dump("Already exists");
             }
         }
